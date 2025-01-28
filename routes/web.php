@@ -11,6 +11,7 @@ use App\Http\Controllers\BiayaSekolahController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\SavingsExportController;
 use App\Http\Controllers\PenarikanController;
+use App\Http\Controllers\TagihanController;
 use Illuminate\Support\Facades\Route;
 
 // Route utama
@@ -82,6 +83,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/penarikan/{penarikan}', [PenarikanController::class, 'update'])->name('penarikan.update');
         Route::delete('/penarikan/{penarikan}', [PenarikanController::class, 'destroy'])->name('penarikan.destroy');
     });
+
+// Tagihan (Bills) Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/tagihan', [TagihanController::class, 'index'])->name('tagihan.index');
+    Route::post('/tagihan/generate', [TagihanController::class, 'generateBills'])->name('tagihan.generate');
+});
 
 });
 

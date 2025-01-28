@@ -66,6 +66,9 @@ class SiswaController extends Controller
             'academic_year_id' => 'required|exists:tahun_ajaran,id',
             'status' => 'required|in:Aktif,Lulus,Keluar',
             'category' => 'required|in:Anak Guru,Anak Yatim,Kakak Beradik,Anak Normal',
+            'status_siswa' => 'required|in:Baru,Lama',
+            'memiliki_raport' => 'required|boolean',
+            'status_iqra' => 'required|in:Alumni TK,Bukan Alumni',
             'remarks' => 'nullable|string'
         ]);
 
@@ -98,6 +101,9 @@ class SiswaController extends Controller
             'academic_year_id' => 'required|exists:tahun_ajaran,id',
             'status' => 'required|in:Aktif,Lulus,Keluar',
             'category' => 'required|in:Anak Guru,Anak Yatim,Kakak Beradik,Anak Normal',
+            'status_siswa' => 'required|in:Baru,Lama',
+            'memiliki_raport' => 'required|boolean',
+            'status_iqra' => 'required|in:Alumni TK,Bukan Alumni',
             'remarks' => 'nullable|string'
         ]);
 

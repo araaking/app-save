@@ -131,6 +131,42 @@
                             </div>
                         </div>
 
+                        <!-- Add after Status & Kategori section -->
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Status Siswa <span class="text-danger">*</span></label>
+                                <select name="status_siswa" class="form-select @error('status_siswa') is-invalid @enderror" required>
+                                    <option value="Baru" {{ old('status_siswa', $siswa->status_siswa) == 'Baru' ? 'selected' : '' }}>Baru</option>
+                                    <option value="Lama" {{ old('status_siswa', $siswa->status_siswa) == 'Lama' ? 'selected' : '' }}>Lama</option>
+                                </select>
+                                @error('status_siswa')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Memiliki Raport <span class="text-danger">*</span></label>
+                                <select name="memiliki_raport" class="form-select @error('memiliki_raport') is-invalid @enderror" required>
+                                    <option value="1" {{ old('memiliki_raport', $siswa->memiliki_raport) == '1' ? 'selected' : '' }}>Ya</option>
+                                    <option value="0" {{ old('memiliki_raport', $siswa->memiliki_raport) == '0' ? 'selected' : '' }}>Tidak</option>
+                                </select>
+                                @error('memiliki_raport')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Status IQRA <span class="text-danger">*</span></label>
+                                <select name="status_iqra" class="form-select @error('status_iqra') is-invalid @enderror" required>
+                                    <option value="Alumni TK" {{ old('status_iqra', $siswa->status_iqra) == 'Alumni TK' ? 'selected' : '' }}>Alumni TK</option>
+                                    <option value="Bukan Alumni" {{ old('status_iqra', $siswa->status_iqra) == 'Bukan Alumni' ? 'selected' : '' }}>Bukan Alumni</option>
+                                </select>
+                                @error('status_iqra')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
                         <!-- Catatan -->
                         <div class="mb-4">
                             <label class="form-label">Catatan Khusus</label>

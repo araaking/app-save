@@ -144,4 +144,31 @@ class TahunAjaranController extends Controller
         
         Log::info("Berhasil menyalin {$biayaLama->count()} biaya sekolah dari tahun {$tahunLama->year_name}");
     }
+
+    public function activate($id)
+    {
+        // Start transaction
+        DB::beginTransaction();
+        
+        try {
+            // Set all years to inactive
+            TahunAjaran::where('is_active', true)
+                ->update(['is_active' => false]);
+        
+            // Set selected year to active
+            $tahunAjaran = TahunAjaran::findOrFail($id);
+            $tahunAjaran->update(['is_active' => true]);
+        
+            // Update student status
+            Artisan::call('students:update-status');
+        
+            DB::commit();
+            return redirect()->route('tahun-ajaran.index')
+                ->with('success', 'Tahun ajaran berhasil diaktifkan dan status siswa diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('tahun-ajaran.index')
+                ->with('error', 'Gagal mengaktifkan tahun ajaran. ' . $e->getMessage());
+        }
+    }
 }

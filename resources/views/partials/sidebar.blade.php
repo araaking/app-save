@@ -104,6 +104,12 @@
                         <span>Biaya Sekolah</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('tagihan.index') }}" class="tp-link">
+                        <i data-feather="file-text"></i>
+                        <span>Tagihan Siswa</span>
+                    </a>
+                </li>
             </ul>
             
             <div class="clearfix"></div>
