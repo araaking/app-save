@@ -60,23 +60,17 @@
                 </li>
 
                 <!-- Menu Keuangan -->
-                <li class="menu-title">Keuangan</li>
+                <li class="menu-title">Tabungan</li>
                 <li>
                     <a href="{{ route('transaksi.index') }}" class="tp-link">
                         <i data-feather="credit-card"></i>
-                        <span>Data Transaksi</span>
+                        <span>Data Tabungan</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('transaksi.create') }}" class="tp-link">
                         <i data-feather="save"></i>
                         <span>Tabungan/Cicilan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('transaksi.penarikan.create') }}" class="tp-link">
-                        <i data-feather="download"></i>
-                        <span>Penarikan/Pinjaman</span>
                     </a>
                 </li>
                 <li>
@@ -87,15 +81,29 @@
                 </li>
 
                 <!-- Tambahan Menu Biaya Sekolah -->
+                
+
+                <li class="menu-title">Data Penarikan</li>
+                <li>
+                    <a href="{{ route('penarikan.index') }}" class="tp-link">
+                        <i data-feather="list"></i>
+                        <span>Daftar Penarikan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('penarikan.create') }}" class="tp-link">
+                        <i data-feather="download"></i>
+                        <span>Tambah Penarikan</span>
+                    </a>
+                </li>
+                
+                <li class="menu-title">Keuangan Sekolah</li>
                 <li>
                     <a href="{{ route('biaya-sekolah.index') }}" class="tp-link">
                         <i data-feather="credit-card"></i>
                         <span>Biaya Sekolah</span>
                     </a>
                 </li>
-
-                
-                
             </ul>
             
             <div class="clearfix"></div>

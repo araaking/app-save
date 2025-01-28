@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BiayaSekolahController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\SavingsExportController;
+use App\Http\Controllers\PenarikanController;
 use Illuminate\Support\Facades\Route;
 
 // Route utama
@@ -63,7 +64,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-buku-tabungan-by-kelas/{kelasId}', [TransaksiController::class, 'getBukuTabunganByKelas'])
         ->name('get-buku-tabungan-by-kelas');
     
-    Route::resource('pembayaran', PembayaranController::class);
     
     // Remove the export-pdf route
     
@@ -72,6 +72,16 @@ Route::middleware('auth')->group(function () {
         ->name('savings.preview');
     Route::get('/savings/export-pdf/{id}', [SavingsExportController::class, 'exportPDF'])
         ->name('savings.export-pdf');
+
+    // Penarikan (Withdrawal) Routes
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/penarikan', [PenarikanController::class, 'index'])->name('penarikan.index');
+        Route::get('/penarikan/create', [PenarikanController::class, 'create'])->name('penarikan.create');
+        Route::post('/penarikan', [PenarikanController::class, 'store'])->name('penarikan.store');
+        Route::get('/penarikan/{penarikan}/edit', [PenarikanController::class, 'edit'])->name('penarikan.edit');
+        Route::put('/penarikan/{penarikan}', [PenarikanController::class, 'update'])->name('penarikan.update');
+        Route::delete('/penarikan/{penarikan}', [PenarikanController::class, 'destroy'])->name('penarikan.destroy');
+    });
 
 });
 

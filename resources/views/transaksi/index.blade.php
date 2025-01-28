@@ -123,15 +123,8 @@
                                class="btn btn-sm btn-info {{ request()->input('jenis') === 'cicilan' ? 'active' : '' }}">
                                 <i class="mdi mdi-cash-multiple me-1"></i> Cicilan
                             </a>
-                            <a href="{{ request()->fullUrlWithQuery(['jenis' => 'penarikan']) }}" 
-                               class="btn btn-sm btn-warning {{ request()->input('jenis') === 'penarikan' ? 'active' : '' }}">
-                                <i class="mdi mdi-cash-remove me-1"></i> Penarikan
-                            </a>
                             <a href="{{ route('transaksi.create') }}" class="btn btn-sm btn-primary">
                                 <i class="mdi mdi-plus me-1"></i> Tambah Transaksi
-                            </a>
-                            <a href="{{ route('transaksi.penarikan.create') }}" class="btn btn-sm btn-danger">
-                                <i class="mdi mdi-cash-remove me-1"></i> Tambah Penarikan
                             </a>
                         </div>
                     </div>
