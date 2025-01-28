@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class TransaksiController extends Controller
 {
     // Menampilkan daftar semua transaksi
-    public function index()
+    public function index(Request $request)
     {
         // Get current active tahun ajaran
         $tahunAjaran = TahunAjaran::where('is_active', true)->firstOrFail();
@@ -20,43 +20,46 @@ class TransaksiController extends Controller
         $allTahunAjaran = TahunAjaran::orderBy('year_name', 'desc')->get();
         
         // Use selected academic year from query parameter or default to active
-        $selectedTahunId = request('tahun_ajaran_id', $tahunAjaran->id);
+        $selectedTahunId = $request->input('tahun_ajaran_id', $tahunAjaran->id);
         $selectedTahun = TahunAjaran::findOrFail($selectedTahunId);
-
-        // Get transactions with pagination
-        $transaksis = Transaksi::whereHas('bukuTabungan', function($query) use ($selectedTahun) {
+    
+        // Build base query
+        $query = Transaksi::whereHas('bukuTabungan', function($query) use ($selectedTahun) {
             $query->where('tahun_ajaran_id', $selectedTahun->id);
-        })
-        ->orderBy('tanggal', 'desc')
-        ->paginate(10);
+        });
+    
+        // Apply jenis filter if provided
+        if ($request->has('jenis') && in_array($request->jenis, ['simpanan', 'cicilan'])) {
+            $query->where('jenis', $request->jenis);
+        } else {
+            // If no filter, show only simpanan and cicilan (exclude penarikan)
+            $query->whereIn('jenis', ['simpanan', 'cicilan']);
+        }
+    
+        // Get transactions with pagination
+        $transaksis = $query->orderBy('tanggal', 'desc')->paginate(10);
     
         // Calculate totals
         $totalSimpanan = Transaksi::whereHas('bukuTabungan', function($query) use ($selectedTahun) {
             $query->where('tahun_ajaran_id', $selectedTahun->id);
-        })
-        ->where('jenis', 'simpanan')
-        ->sum('jumlah');
+        })->where('jenis', 'simpanan')->sum('jumlah');
     
         $totalCicilan = Transaksi::whereHas('bukuTabungan', function($query) use ($selectedTahun) {
             $query->where('tahun_ajaran_id', $selectedTahun->id);
-        })
-        ->where('jenis', 'cicilan')
-        ->sum('jumlah');
+        })->where('jenis', 'cicilan')->sum('jumlah');
     
         $totalPenarikan = Transaksi::whereHas('bukuTabungan', function($query) use ($selectedTahun) {
             $query->where('tahun_ajaran_id', $selectedTahun->id);
-        })
-        ->where('jenis', 'penarikan')
-        ->sum('jumlah');
+        })->where('jenis', 'penarikan')->sum('jumlah');
     
         return view('transaksi.index', compact(
-            'transaksis',
-            'tahunAjaran',
+            'transaksis', 
+            'tahunAjaran', 
+            'allTahunAjaran', 
             'selectedTahun',
             'totalSimpanan',
             'totalCicilan',
-            'totalPenarikan',
-            'allTahunAjaran'
+            'totalPenarikan'
         ));
     }
 

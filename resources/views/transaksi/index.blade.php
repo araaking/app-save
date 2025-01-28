@@ -115,6 +115,11 @@
                                 </select>
                             </form>
 
+                            <a href="{{ route('transaksi.index') }}" 
+                               class="btn btn-sm btn-secondary">
+                                <i class="mdi mdi-refresh me-1"></i> Reset
+                            </a>
+
                             <a href="{{ request()->fullUrlWithQuery(['jenis' => 'simpanan']) }}" 
                                class="btn btn-sm btn-success {{ request()->input('jenis') === 'simpanan' ? 'active' : '' }}">
                                 <i class="mdi mdi-cash me-1"></i> Simpanan
