@@ -36,6 +36,7 @@
                                     <th>Wisuda</th>
                                     <th>Uang Pangkal</th>
                                     <th>Foto</th>
+                                    <th>Rapot</th>
                                     <th>Total</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -57,6 +58,7 @@
                                         <td>{{ isset($tagihanByJenis['Wisuda']) ? 'Rp ' . number_format($tagihanByJenis['Wisuda']->sisa, 0, ',', '.') : '-' }}</td>
                                         <td>{{ isset($tagihanByJenis['Uang Pangkal']) ? 'Rp ' . number_format($tagihanByJenis['Uang Pangkal']->sisa, 0, ',', '.') : '-' }}</td>
                                         <td>{{ isset($tagihanByJenis['Foto']) ? 'Rp ' . number_format($tagihanByJenis['Foto']->sisa, 0, ',', '.') : '-' }}</td>
+                                        <td>{{ isset($tagihanByJenis['Raport']) ? 'Rp ' . number_format($tagihanByJenis['Raport']->sisa, 0, ',', '.') : '-' }}</td> <!-- Tambahkan kolom untuk raport -->
                                         <td>Rp {{ number_format($siswaTagihan->sum('sisa'), 0, ',', '.') }}</td>
                                         <td>
                                             <div class="btn-group">

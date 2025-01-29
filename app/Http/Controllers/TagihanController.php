@@ -78,10 +78,42 @@ class TagihanController extends Controller
             if (in_array($siswa->kelas->tingkat, [1, 7])) {
                 $this->generatePhotoBill($siswa, $tahunAktif);
             }
+    
+            // Raport - Only for students without a raport
+            if (!$siswa->memiliki_raport) {
+                $this->generateRaportBill($siswa, $tahunAktif);
+            }
         }
     
         return redirect()->route('tagihan.index')
             ->with('success', 'Tagihan berhasil dibuat untuk semua siswa aktif.');
+    }
+
+    // Add the new generateRaportBill method
+    private function generateRaportBill($siswa, $tahunAktif)
+    {
+        $existing = Tagihan::where('siswa_id', $siswa->id)
+            ->where('tahun_ajaran_id', $tahunAktif->id)
+            ->where('jenis_biaya', 'Raport')
+            ->first();
+    
+        if (!$existing) {
+            $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktif->id)
+                ->where('jenis_biaya', 'Raport')
+                ->where('kategori_siswa', $siswa->category)
+                ->first();
+    
+            if ($biaya) {
+                Tagihan::create([
+                    'siswa_id' => $siswa->id,
+                    'tahun_ajaran_id' => $tahunAktif->id,
+                    'jenis_biaya' => 'Raport',
+                    'jumlah' => $biaya->jumlah,
+                    'sisa' => $biaya->jumlah,
+                    'status' => 'Belum Lunas'
+                ]);
+            }
+        }
     }
 
     private function generateSPPBill($siswa, $tahunAktif)
