@@ -89,7 +89,6 @@ class TagihanController extends Controller
             ->with('success', 'Tagihan berhasil dibuat untuk semua siswa aktif.');
     }
 
-    // Add the new generateRaportBill method
     private function generateRaportBill($siswa, $tahunAktif)
     {
         $existing = Tagihan::where('siswa_id', $siswa->id)
@@ -194,22 +193,22 @@ class TagihanController extends Controller
         }
     }
 
-    private function generateUAMBill($siswa, $tahunAktif)
+    private function generateUAMBill($siswa, $tahunAktiff)
     {
         $existing = Tagihan::where('siswa_id', $siswa->id)
-            ->where('tahun_ajaran_id', $tahunAktif->id)
+            ->where('tahun_ajaran_id', $tahunAktiff->id)
             ->where('jenis_biaya', 'UAM')
             ->first();
     
         if (!$existing) {
-            $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktif->id)
+            $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktiff->id)
                 ->where('jenis_biaya', 'UAM')
                 ->first();
     
             if ($biaya) {
                 Tagihan::create([
                     'siswa_id' => $siswa->id,
-                    'tahun_ajaran_id' => $tahunAktif->id,
+                    'tahun_ajaran_id' => $tahunAktiff->id,
                     'jenis_biaya' => 'UAM',
                     'jumlah' => $biaya->jumlah,
                     'sisa' => $biaya->jumlah,
@@ -246,6 +245,10 @@ class TagihanController extends Controller
 
     private function generateInitialFeeBill($siswa, $tahunAktif)
     {
+        if ($siswa->status_siswa != 'Baru') {
+            return;
+        }
+
         $existing = Tagihan::where('siswa_id', $siswa->id)
             ->where('tahun_ajaran_id', $tahunAktif->id)
             ->where('jenis_biaya', 'Uang Pangkal')

@@ -36,7 +36,7 @@
                                     <th>Wisuda</th>
                                     <th>Uang Pangkal</th>
                                     <th>Foto</th>
-                                    <th>Rapot</th>
+                                    <th>Raport</th>
                                     <th>Total</th>
                                     <th>Aksi</th>
                                 </tr>
