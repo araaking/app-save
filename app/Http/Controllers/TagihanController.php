@@ -47,6 +47,16 @@ class TagihanController extends Controller
             ->where('academic_year_id', $tahunAktif->id)
             ->get();
     
+        // Update memiliki_raport status for all active students
+        foreach ($siswaAktif as $siswa) {
+            $hasRaport = Tagihan::where('siswa_id', $siswa->id)
+                ->where('jenis_biaya', 'Raport')
+                ->where('status', 'Lunas')
+                ->exists();
+            
+            $siswa->update(['memiliki_raport' => $hasRaport]);
+        }
+    
         foreach ($siswaAktif as $siswa) {
             // SPP - All students (TK to Grade 6)
             $this->generateSPPBill($siswa, $tahunAktif);
@@ -90,30 +100,29 @@ class TagihanController extends Controller
     }
 
     private function generateRaportBill($siswa, $tahunAktif)
-    {
-        $existing = Tagihan::where('siswa_id', $siswa->id)
-            ->where('tahun_ajaran_id', $tahunAktif->id)
-            ->where('jenis_biaya', 'Raport')
+{
+    $existing = Tagihan::where('siswa_id', $siswa->id)
+        ->where('tahun_ajaran_id', $tahunAktif->id)
+        ->where('jenis_biaya', 'Raport')
+        ->first();
+
+    if (!$existing) {
+        $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktif->id)
+            ->where('jenis_biaya', 'Raport') // Tidak memeriksa kategori_siswa
             ->first();
-    
-        if (!$existing) {
-            $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktif->id)
-                ->where('jenis_biaya', 'Raport')
-                ->where('kategori_siswa', $siswa->category)
-                ->first();
-    
-            if ($biaya) {
-                Tagihan::create([
-                    'siswa_id' => $siswa->id,
-                    'tahun_ajaran_id' => $tahunAktif->id,
-                    'jenis_biaya' => 'Raport',
-                    'jumlah' => $biaya->jumlah,
-                    'sisa' => $biaya->jumlah,
-                    'status' => 'Belum Lunas'
-                ]);
-            }
+
+        if ($biaya) {
+            Tagihan::create([
+                'siswa_id' => $siswa->id,
+                'tahun_ajaran_id' => $tahunAktif->id,
+                'jenis_biaya' => 'Raport',
+                'jumlah' => $biaya->jumlah,
+                'sisa' => $biaya->jumlah,
+                'status' => 'Belum Lunas'
+            ]);
         }
     }
+}
 
     private function generateSPPBill($siswa, $tahunAktif)
     {
