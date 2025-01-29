@@ -43,72 +43,66 @@ class TagihanController extends Controller
     public function generateBills()
     {
         $tahunAktif = TahunAjaran::where('is_active', true)->firstOrFail();
-        $siswaAktif = Siswa::with('kelas')->where('status', 'Aktif')
+        $siswaAktif = Siswa::with(['kelas', 'academicYear'])->where('status', 'Aktif')
             ->where('academic_year_id', $tahunAktif->id)
             ->get();
-    
-        // Update memiliki_raport status for all active students
-        foreach ($siswaAktif as $siswa) {
-            $hasRaport = Tagihan::where('siswa_id', $siswa->id)
-                ->where('jenis_biaya', 'Raport')
-                ->where('status', 'Lunas')
-                ->exists();
-            
-            $siswa->update(['memiliki_raport' => $hasRaport]);
-        }
     
         foreach ($siswaAktif as $siswa) {
             // SPP - All students (TK to Grade 6)
             $this->generateSPPBill($siswa, $tahunAktif);
-    
+        
             // IKK - All students (TK to Grade 6)
             $this->generateIKKBill($siswa, $tahunAktif);
-    
+        
             // THB - Only Grade 1-6 (tingkat 2-7)
             if ($siswa->kelas->tingkat >= 2 && $siswa->kelas->tingkat <= 7) {
                 $this->generateTHBBill($siswa, $tahunAktif);
             }
-    
+        
             // UAM - Only Grade 6 (tingkat 7)
             if ($siswa->kelas->tingkat == 7) {
                 $this->generateUAMBill($siswa, $tahunAktif);
             }
-    
+        
             // Graduation - Only for TK (tingkat 1) who graduated from IQRA
             if ($siswa->kelas->tingkat == 1 && $siswa->status_iqra == 'Alumni TK') {
                 $this->generateGraduationBill($siswa, $tahunAktif);
             }
-    
+        
             // Initial Fee - Only for new students
             if ($siswa->status_siswa == 'Baru') {
                 $this->generateInitialFeeBill($siswa, $tahunAktif);
             }
-    
+        
             // Photo - Only for TK and Grade 6 (tingkat 1 and 7)
             if (in_array($siswa->kelas->tingkat, [1, 7])) {
                 $this->generatePhotoBill($siswa, $tahunAktif);
             }
-    
+        
             // Raport - Only for students without a raport
-            if (!$siswa->memiliki_raport) {
-                $this->generateRaportBill($siswa, $tahunAktif);
-            }
+            // Remove conditional check and call generateRaportBill directly
+            $this->generateRaportBill($siswa, $tahunAktif);
         }
-    
+        
         return redirect()->route('tagihan.index')
             ->with('success', 'Tagihan berhasil dibuat untuk semua siswa aktif.');
     }
 
     private function generateRaportBill($siswa, $tahunAktif)
 {
+    // Skip if student already has a report
+    if ($siswa->memiliki_raport) {
+        return;
+    }
+
     $existing = Tagihan::where('siswa_id', $siswa->id)
         ->where('tahun_ajaran_id', $tahunAktif->id)
         ->where('jenis_biaya', 'Raport')
-        ->first();
+        ->exists();
 
     if (!$existing) {
         $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktif->id)
-            ->where('jenis_biaya', 'Raport') // Tidak memeriksa kategori_siswa
+            ->where('jenis_biaya', 'Raport')
             ->first();
 
         if ($biaya) {

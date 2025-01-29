@@ -144,7 +144,25 @@
                             </div>
                         
                             <div class="col-md-4 mb-3">
-                                <label class="form-label">Memiliki Raport <span class="text-danger">*</span></label>
+                                <!-- Status Raport -->
+                                <div class="mb-3">
+                                    <label class="form-label">Status Raport <span class="text-danger">*</span></label>
+                                    <div class="form-check">
+                                        <input type="radio" id="memiliki_raport_0" name="memiliki_raport" value="0" 
+                                               class="form-check-input @error('memiliki_raport') is-invalid @enderror"
+                                               {{ old('memiliki_raport') === '0' ? 'checked' : '' }} required>
+                                        <label class="form-check-label" for="memiliki_raport_0">Belum Memiliki</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" id="memiliki_raport_1" name="memiliki_raport" value="1" 
+                                               class="form-check-input @error('memiliki_raport') is-invalid @enderror"
+                                               {{ old('memiliki_raport') === '1' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="memiliki_raport_1">Sudah Memiliki</label>
+                                    </div>
+                                    @error('memiliki_raport')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                                 <select name="memiliki_raport" class="form-select @error('memiliki_raport') is-invalid @enderror" required>
                                     <option value="1" {{ old('memiliki_raport') == '1' ? 'selected' : '' }}>Ya</option>
                                     <option value="0" {{ old('memiliki_raport') == '0' ? 'selected' : '' }}>Tidak</option>

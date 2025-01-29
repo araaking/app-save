@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\TahunAjaran;
+use App\Models\Tagihan;  // Add this at the top with other imports
 use Illuminate\Http\Request;
 
 class SiswaController extends Controller
@@ -59,7 +60,7 @@ class SiswaController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'nis' => 'nullable|string|max:20|unique:siswa',
             'class_id' => 'required|exists:kelas,id',
@@ -72,10 +73,10 @@ class SiswaController extends Controller
             'remarks' => 'nullable|string'
         ]);
 
-        Siswa::create($request->all());
+        Siswa::create($validated);
 
         return redirect()->route('siswa.index')
-            ->with('success', 'Siswa berhasil ditambahkan.');
+            ->with('success', 'Data siswa berhasil ditambahkan.');
     }
 
     /**
@@ -94,7 +95,7 @@ class SiswaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'nis' => 'nullable|string|max:20|unique:siswa,nis,' . $id,
             'class_id' => 'required|exists:kelas,id',
@@ -106,10 +107,19 @@ class SiswaController extends Controller
             'status_iqra' => 'required|in:Alumni TK,Bukan Alumni',
             'remarks' => 'nullable|string'
         ]);
-
+    
         $siswa = Siswa::findOrFail($id);
-        $siswa->update($request->all());
-
+        
+        // Delete unpaid report bills if report status changes from false to true
+        if ($request->boolean('memiliki_raport') && !$siswa->memiliki_raport) {
+            Tagihan::where('siswa_id', $siswa->id)
+                ->where('jenis_biaya', 'Raport')
+                ->where('status', 'Belum Lunas')
+                ->delete();
+        }
+    
+        $siswa->update($validated);
+    
         return redirect()->route('siswa.index')
             ->with('success', 'Data siswa berhasil diperbarui.');
     }
