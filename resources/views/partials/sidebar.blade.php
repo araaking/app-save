@@ -4,24 +4,24 @@
             <div class="logo-box">
                 <a href="{{ route('dashboard') }}" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="{{ asset('assets/images/logo-sm.png') }}" 
+                        <img src="{{ asset('assets/images/logo.png') }}" 
                             alt="Logo Small" 
                             height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="{{ asset('assets/images/logo-light.png') }}" 
+                        <img src="{{ asset('assets/images/logo.png') }}" 
                             alt="Logo Light" 
                             height="24">
                     </span>
                 </a>
                 <a href="{{ route('dashboard') }}" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="{{ asset('assets/images/logo-sm.png') }}" 
+                        <img src="{{ asset('assets/images/logo.png') }}" 
                             alt="Logo Small" 
                             height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="{{ asset('assets/images/logo-dark.png') }}" 
+                        <img src="{{ asset('assets/images/logo.png') }}" 
                             alt="Logo Dark" 
                             height="24">
                     </span>

@@ -35,12 +35,12 @@
                                                 <div class="auth-brand">
                                                     <a href="index.html" class="logo logo-light">
                                                         <span class="logo-lg">
-                                                            <img src="{{ asset('assets/images/logo-light-3.png') }}" alt="" height="24">
+                                                            <img src="{{ asset('assets/images/logo.png') }}" alt="" height="24">
                                                         </span>
                                                     </a>
                                                     <a href="index.html" class="logo logo-dark">
                                                         <span class="logo-lg">
-                                                            <img src="{{ asset('assets/images/logo-dark-3.png') }}" alt="" height="24">
+                                                            <img src="{{ asset('assets/images/logo.png') }}" alt="" height="24">
                                                         </span>
                                                     </a>
                                                 </div>
