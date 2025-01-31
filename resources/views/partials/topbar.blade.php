@@ -47,11 +47,11 @@
                        data-bs-toggle="dropdown" 
                        href="#" 
                        role="button">
-                        <img src="{{ asset('assets/images/users/user-13.jpg') }}" 
+                        <img src="{{ auth()->user()->profile_photo ? asset('storage/' . auth()->user()->profile_photo) : asset('assets/images/users/user-13.jpg') }}" 
                              alt="user-image" 
                              class="rounded-circle" />
                         <span class="pro-user-name ms-1">
-                            Alex <i class="mdi mdi-chevron-down"></i>
+                            {{ auth()->user()->name }} <i class="mdi mdi-chevron-down"></i>
                         </span>
                     </a>
                     
@@ -62,7 +62,7 @@
                         </div>
                         
                         <!-- Profile Link -->
-                        <a href="pages-profile.html" 
+                        <a href="{{route('profile.edit')}}" 
                            class="dropdown-item notify-item">
                             <i class="mdi mdi-account-circle-outline fs-16 align-middle"></i>
                             <span>My Account</span>

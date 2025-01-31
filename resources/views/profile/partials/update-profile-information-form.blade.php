@@ -13,10 +13,10 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
-
+        
         <div>
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
@@ -46,6 +46,18 @@
                 </div>
             @endif
         </div>
+
+        <div>
+        <x-input-label for="profile_photo" :value="__('Foto Profil')" />
+        <input type="file" name="profile_photo" id="profile_photo" class="block mt-1 w-full">
+        <x-input-error class="mt-2" :messages="$errors->get('profile_photo')" />
+        
+        <!-- Tampilkan foto saat ini -->
+        @if(auth()->user()->profile_photo)
+            <img src="{{ asset('storage/' . auth()->user()->profile_photo) }}" 
+                 class="mt-2 h-20 w-20 rounded-full object-cover">
+        @endif
+    </div>
 
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
