@@ -175,14 +175,10 @@
                                     @error('memiliki_raport')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                    <small class="text-muted">
+                                        Pilih "Sudah Memiliki" jika siswa sudah memiliki raport.
+                                    </small>
                                 </div>
-                                <select name="memiliki_raport" class="form-select @error('memiliki_raport') is-invalid @enderror" required>
-                                    <option value="1" {{ old('memiliki_raport') == '1' ? 'selected' : '' }}>Ya</option>
-                                    <option value="0" {{ old('memiliki_raport') == '0' ? 'selected' : '' }}>Tidak</option>
-                                </select>
-                                @error('memiliki_raport')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
                         
                             <div class="col-md-4 mb-3">
