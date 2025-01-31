@@ -6,15 +6,40 @@ use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\Tagihan;
 use App\Models\Pembayaran;
+use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PembayaranController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pembayarans = Pembayaran::with(['siswa', 'tagihan'])->latest()->paginate(10);
-        return view('pembayaran.index', compact('pembayarans'));
+        $tahunAktif = TahunAjaran::where('is_active', true)->first();
+    
+        $query = Pembayaran::query()
+            ->with(['siswa.kelas'])
+            ->whereHas('siswa', function($q) use ($tahunAktif) {
+                $q->where('academic_year_id', $tahunAktif->id);
+            });
+    
+        // Filter by class if selected
+        if ($request->filled('kelas_id')) {
+            $query->whereHas('siswa', function($q) use ($request) {
+                $q->where('class_id', $request->kelas_id);
+            });
+        }
+    
+        // Filter by student name if search term provided
+        if ($request->filled('search')) {
+            $query->whereHas('siswa', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%');
+            });
+        }
+    
+        $pembayarans = $query->latest()->paginate(10);
+        $kelas = Kelas::orderBy('name')->get();
+    
+        return view('pembayaran.index', compact('pembayarans', 'kelas'));
     }
 
     public function create(Request $request)
