@@ -84,19 +84,17 @@ Route::middleware('auth')->group(function () {
         Route::delete('/penarikan/{penarikan}', [PenarikanController::class, 'destroy'])->name('penarikan.destroy');
     });
 
-// Pembayaran Routes
-Route::get('/pembayaran/create', [PembayaranController::class, 'create'])->name('pembayaran.create');
-Route::post('/pembayaran', [PembayaranController::class, 'store'])->name('pembayaran.store');
+    // Pembayaran Routes
+    Route::get('/pembayaran/create', [PembayaranController::class, 'create'])->name('pembayaran.create');
+    Route::post('/pembayaran', [PembayaranController::class, 'store'])->name('pembayaran.store');
 
-// API Route for Tagihan
-Route::get('/api/siswa/{siswa}/tagihan', [PembayaranController::class, 'getTagihan']);
+    // API Route for Tagihan
+    Route::get('/api/siswa/{siswa}/tagihan', [PembayaranController::class, 'getTagihan']);
 
-// Tagihan (Bills) Routes
-Route::middleware(['auth'])->group(function () {
+    // Tagihan (Bills) Routes
     Route::get('/tagihan', [TagihanController::class, 'index'])->name('tagihan.index');
     Route::post('/tagihan/generate', [TagihanController::class, 'generateBills'])->name('tagihan.generate');
-});
 
-});
+}); // End of auth middleware group
 
 require __DIR__.'/auth.php';

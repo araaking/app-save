@@ -98,19 +98,25 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('paymentForm');
-    const jenisBiaya = document.getElementById('jenis_biaya');
+    const tagihan = @json($tagihan);
+    const jenisBiayaSelect = document.getElementById('jenis_biaya');
     const bulanContainer = document.getElementById('bulan_hijri_container');
     const bulanSelect = document.getElementById('bulan_hijri');
-    const siswaSelect = document.getElementById('siswa_id');
     const jumlahInput = document.getElementById('jumlah');
-    const submitBtn = document.getElementById('submitBtn');
-    const paymentInfo = document.getElementById('payment_info');
     
-    loadTagihan(siswaSelect.value);
+    // Populate jenis biaya options
+    jenisBiayaSelect.innerHTML = '<option value="">Pilih Jenis Biaya</option>';
+    tagihan.forEach(item => {
+        const option = new Option(
+            `${item.jenis_biaya} - Sisa: Rp ${new Intl.NumberFormat('id-ID').format(item.sisa)}`,
+            item.jenis_biaya
+        );
+        option.dataset.sisa = item.sisa;
+        jenisBiayaSelect.add(option);
+    });
 
     function toggleBulanField() {
-        const isSPP = jenisBiaya.value === 'SPP';
+        const isSPP = jenisBiayaSelect.value === 'SPP';
         bulanContainer.style.display = isSPP ? 'block' : 'none';
         bulanSelect.required = isSPP;
         if (!isSPP) bulanSelect.value = '';
@@ -118,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     toggleBulanField();
     
-    jenisBiaya.addEventListener('change', function() {
+    jenisBiayaSelect.addEventListener('change', function() {
         toggleBulanField();
         updatePaymentInfo(this.options[this.selectedIndex]);
     });

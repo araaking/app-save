@@ -19,13 +19,22 @@ class PembayaranController extends Controller
 
     public function create(Request $request)
     {
-        $siswas = collect();
+        $siswa = Siswa::with('kelas')->findOrFail($request->siswa_id);
         
-        if ($request->has('siswa_id')) {
-            $siswas = Siswa::where('id', $request->siswa_id)->get();
-        }
-
-        return view('pembayaran.create', compact('siswas'));
+        $tagihan = Tagihan::where('siswa_id', $siswa->id)
+            ->where('sisa', '>', 0)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'jenis_biaya' => $item->jenis_biaya,
+                    'sisa' => $item->sisa
+                ];
+            });
+    
+        return view('pembayaran.create', [
+            'siswas' => [$siswa],
+            'tagihan' => $tagihan
+        ]);
     }
 
     public function store(Request $request)
