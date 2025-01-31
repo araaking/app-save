@@ -64,10 +64,9 @@
                                 <label for="metode_pembayaran" class="form-label">Metode Pembayaran</label>
                                 <select name="metode_pembayaran" id="metode_pembayaran" class="form-select" required>
                                     <option value="cash">Cash</option>
-                                    <option value="cicilan">Via Cicilan</option>
-                                    <option value="tabungan">Via Tabungan</option>
+                                    <option value="cicilan">Cicilan</option>
+                                    <option value="tabungan">Tabungan</option>
                                 </select>
-                                <div id="saldo_info" class="text-muted mt-1" style="display: none;"></div>
                             </div>
 
                             <div class="mb-3">
