@@ -228,22 +228,23 @@ class TagihanController extends Controller
             }
         }
 
-        private function generateUAMBill($siswa, $tahunAktiff)
+        private function generateUAMBill($siswa, $tahunAktif)
         {
             $existing = Tagihan::where('siswa_id', $siswa->id)
-                ->where('tahun_ajaran_id', $tahunAktiff->id)
+                ->where('tahun_ajaran_id', $tahunAktif->id)
                 ->where('jenis_biaya', 'UAM')
                 ->first();
         
             if (!$existing) {
-                $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktiff->id)
+                $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktif->id)
                     ->where('jenis_biaya', 'UAM')
+                    ->where('tingkat', $siswa->kelas->tingkat)  // Add this line to match student's grade
                     ->first();
         
                 if ($biaya) {
                     Tagihan::create([
                         'siswa_id' => $siswa->id,
-                        'tahun_ajaran_id' => $tahunAktiff->id,
+                        'tahun_ajaran_id' => $tahunAktif->id,
                         'jenis_biaya' => 'UAM',
                         'jumlah' => $biaya->jumlah,
                         'sisa' => $biaya->jumlah,

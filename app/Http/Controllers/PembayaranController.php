@@ -19,16 +19,13 @@ class PembayaranController extends Controller
 
     public function create(Request $request)
     {
-        $kelasList = Kelas::all();
         $siswas = collect();
-
-        if ($request->has('kelas_id')) {
-            $siswas = Siswa::where('class_id', $request->kelas_id) // Changed from kelas_id to class_id
-                          ->orderBy('name')
-                          ->get();
+        
+        if ($request->has('siswa_id')) {
+            $siswas = Siswa::where('id', $request->siswa_id)->get();
         }
 
-        return view('pembayaran.create', compact('kelasList', 'siswas'));
+        return view('pembayaran.create', compact('siswas'));
     }
 
     public function store(Request $request)
@@ -40,15 +37,21 @@ class PembayaranController extends Controller
             'metode_pembayaran' => 'required|in:' . implode(',', Pembayaran::METODE_PEMBAYARAN),
             'bulan_hijri' => 'required_if:jenis_biaya,SPP|nullable|in:' . implode(',', Pembayaran::BULAN_HIJRI),
         ]);
-
+    
         try {
             DB::beginTransaction();
-
+    
             // Get the related tagihan
             $tagihan = Tagihan::where('siswa_id', $request->siswa_id)
                             ->where('jenis_biaya', $request->jenis_biaya)
+                            ->where('sisa', '>', 0) // Add this condition
                             ->firstOrFail();
-
+    
+            // Validate payment amount doesn't exceed remaining balance
+            if ($request->jumlah > $tagihan->sisa) {
+                throw new \Exception('Jumlah pembayaran melebihi sisa tagihan.');
+            }
+    
             // Create payment record
             $pembayaran = Pembayaran::create([
                 'siswa_id' => $request->siswa_id,
@@ -59,14 +62,17 @@ class PembayaranController extends Controller
                 'metode_pembayaran' => $request->metode_pembayaran,
                 'keterangan' => $request->keterangan,
             ]);
-
-            // Update tagihan based on payment method
+    
+            // Update tagihan
             $tagihan->sisa -= $request->jumlah;
+            if ($tagihan->sisa == 0) {
+                $tagihan->status = 'Lunas';
+            }
             $tagihan->save();
-
+    
             DB::commit();
             return redirect()->route('tagihan.index')->with('success', 'Pembayaran berhasil disimpan.');
-
+    
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();

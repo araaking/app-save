@@ -28,7 +28,8 @@ class Pembayaran extends Model
         'Raport', 
         'Wisuda', 
         'Foto', 
-        'Seragam'
+        'Seragam',
+        'UAM'
     ];
 
     const BULAN_HIJRI = [
@@ -62,4 +63,10 @@ class Pembayaran extends Model
     {
         return $this->belongsTo(Tagihan::class);
     }
+
+    // Di Pembayaran.php
+public function transaksi()
+{
+    return $this->hasOne(Transaksi::class);
+}
 }
