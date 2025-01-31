@@ -97,6 +97,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tagihan/generate', [TagihanController::class, 'generateBills'])->name('tagihan.generate');
 });
 
+// Add this with your other API routes
+Route::get('/api/siswa/{siswaId}/buku-tabungan', [PembayaranController::class, 'getBukuTabungan']);
+
 });
 
 require __DIR__.'/auth.php';
