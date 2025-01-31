@@ -1,17 +1,20 @@
 <?php
-// File: database/migrations/xxxx_xx_xx_create_siswa_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSiswaTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
         Schema::create('siswa', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->default('Laki-laki');
+            $table->enum('status_siswa', ['Baru', 'Lama']);
+            $table->boolean('memiliki_raport')->default(false);
+            $table->enum('status_iqra', ['Alumni TK', 'Bukan Alumni']);
             $table->string('nis', 20)->unique()->nullable();
             $table->foreignId('class_id')->constrained('kelas')->onDelete('cascade');
             $table->foreignId('academic_year_id')->constrained('tahun_ajaran')->onDelete('cascade');
@@ -26,4 +29,4 @@ class CreateSiswaTable extends Migration
     {
         Schema::dropIfExists('siswa');
     }
-}
+};
