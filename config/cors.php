@@ -1,22 +1,12 @@
 <?php
 
 return [
-    'paths' => ['api/*'],
-    
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
     'allowed_methods' => ['*'],
-    
-    'allowed_origins' => [
-        'https://raodlatul.my.id',
-        'http://localhost:8000',  // For local development
-    ],
-    
+    'allowed_origins' => ['*'],  // In production, change this to your specific domain
     'allowed_origins_patterns' => [],
-    
     'allowed_headers' => ['*'],
-    
     'exposed_headers' => [],
-    
     'max_age' => 0,
-    
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 ];

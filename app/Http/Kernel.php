@@ -1,6 +1,6 @@
 protected $middleware = [
-    // ... existing middleware
     \Illuminate\Http\Middleware\HandleCors::class,
+    // ... other middleware
 ];
 
 protected $middlewareGroups = [

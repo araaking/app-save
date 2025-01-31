@@ -148,61 +148,63 @@ document.addEventListener('DOMContentLoaded', function() {
 function loadTagihan(siswaId) {
     if (!siswaId) return;
 
-    document.getElementById('payment_info').textContent = 'Memuat data tagihan...';
-    document.getElementById('jenis_biaya').disabled = true;
+    const paymentInfo = document.getElementById('payment_info');
+    const jenisBiayaSelect = document.getElementById('jenis_biaya');
+    
+    paymentInfo.textContent = 'Memuat data tagihan...';
+    jenisBiayaSelect.disabled = true;
 
-    fetch(`https://raodlatul.my.id/api/siswa/${siswaId}/tagihan`, {
+    // Use window.location.origin to make it work in both development and production
+    const baseUrl = window.location.origin;
+    
+    fetch(`${baseUrl}/api/siswa/${siswaId}/tagihan`, {
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'  // Add this for Laravel to detect AJAX request
         },
-        credentials: 'include' // If you need to send cookies
+        credentials: 'same-origin'
     })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            const jenisBiayaSelect = document.getElementById('jenis_biaya');
-            jenisBiayaSelect.innerHTML = '<option value="">Pilih Jenis Biaya</option>';
-            jenisBiayaSelect.disabled = false;
-            
-            data.forEach(tagihan => {
-                if (tagihan.sisa > 0) {
-                    const option = new Option(
-                        `${tagihan.jenis_biaya} - Sisa: Rp ${new Intl.NumberFormat('id-ID').format(tagihan.sisa)}`,
-                        tagihan.jenis_biaya
-                    );
-                    option.dataset.sisa = tagihan.sisa;
-                    jenisBiayaSelect.add(option);
-                }
-            });
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        jenisBiayaSelect.innerHTML = '<option value="">Pilih Jenis Biaya</option>';
+        jenisBiayaSelect.disabled = false;
+        
+        if (!Array.isArray(data)) {
+            throw new Error('Invalid response format');
+        }
 
-            if (data.length === 0) {
-                document.getElementById('payment_info').textContent = 'Tidak ada tagihan yang perlu dibayar.';
-            }
-        })
-        .catch(error => {
-            console.error('Error details:', {
-                message: error.message,
-                siswaId: siswaId,
-                timestamp: new Date().toISOString(),
-                stack: error.stack
-            });
-            
-            document.getElementById('jenis_biaya').disabled = false;
-            document.getElementById('payment_info').textContent = 
-                'Terjadi kesalahan saat memuat data tagihan. Silakan coba lagi atau hubungi administrator.';
-            
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-danger mt-2';
-            alertDiv.textContent = 'Gagal memuat data: ' + error.message;
-            document.getElementById('payment_info').parentNode.appendChild(alertDiv);
+        const tagihanWithSisa = data.filter(tagihan => tagihan.sisa > 0);
+        
+        if (tagihanWithSisa.length === 0) {
+            paymentInfo.textContent = 'Tidak ada tagihan yang perlu dibayar.';
+            return;
+        }
+
+        tagihanWithSisa.forEach(tagihan => {
+            const option = new Option(
+                `${tagihan.jenis_biaya} - Sisa: Rp ${new Intl.NumberFormat('id-ID').format(tagihan.sisa)}`,
+                tagihan.jenis_biaya
+            );
+            option.dataset.sisa = tagihan.sisa;
+            jenisBiayaSelect.add(option);
         });
+    })
+    .catch(error => {
+        console.error('Error loading tagihan:', error);
+        jenisBiayaSelect.disabled = false;
+        paymentInfo.textContent = 'Terjadi kesalahan saat memuat data tagihan.';
+        
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger mt-2';
+        alertDiv.textContent = `Error: ${error.message}`;
+        paymentInfo.parentNode.appendChild(alertDiv);
+    });
 }
 
 function updatePaymentInfo(selectedOption) {
