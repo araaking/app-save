@@ -63,6 +63,7 @@ class SiswaController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'nis' => 'nullable|string|max:20|unique:siswa',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'class_id' => 'required|exists:kelas,id',
             'academic_year_id' => 'required|exists:tahun_ajaran,id',
             'status' => 'required|in:Aktif,Lulus,Keluar',
@@ -98,6 +99,7 @@ class SiswaController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'nis' => 'nullable|string|max:20|unique:siswa,nis,' . $id,
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'class_id' => 'required|exists:kelas,id',
             'academic_year_id' => 'required|exists:tahun_ajaran,id',
             'status' => 'required|in:Aktif,Lulus,Keluar',

@@ -56,6 +56,19 @@
                             @enderror
                         </div>
 
+                        <!-- Jenis Kelamin -->
+                        <div class="mb-3">
+                            <label class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
+                            <select name="jenis_kelamin" class="form-select @error('jenis_kelamin') is-invalid @enderror" required>
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="Laki-laki" {{ old('jenis_kelamin', $siswa->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="Perempuan" {{ old('jenis_kelamin', $siswa->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                            @error('jenis_kelamin')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <!-- NIS -->
                         <div class="mb-3">
                             <label class="form-label">Nomor Induk Siswa (NIS)</label>
