@@ -7,6 +7,8 @@ use App\Models\Siswa;
 use App\Models\BiayaSekolah;
 use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
+use App\Models\Pembayaran;
+use Illuminate\Support\Facades\DB;
 
 class TagihanController extends Controller
 {
@@ -41,23 +43,34 @@ class TagihanController extends Controller
     }
 
     public function generateBills(Request $request)
-        {
-            $tahunAktif = TahunAjaran::where('is_active', true)->firstOrFail();
-            $siswaAktif = Siswa::with(['kelas', 'academicYear'])->where('status', 'Aktif')
-                ->where('academic_year_id', $tahunAktif->id)
-                ->get();
-        
-            $isRefresh = $request->has('refresh');
-        
-            if ($isRefresh) {
-                foreach ($siswaAktif as $siswa) {
-                    Tagihan::where('siswa_id', $siswa->id)
-                        ->where('tahun_ajaran_id', $tahunAktif->id)
-                        ->where('status', 'Belum Lunas')
-                        ->delete();
+    {
+        $tahunAktif = TahunAjaran::where('is_active', true)->firstOrFail();
+        $siswaAktif = Siswa::with(['kelas', 'academicYear'])->where('status', 'Aktif')
+            ->where('academic_year_id', $tahunAktif->id)
+            ->get();
+    
+        $isRefresh = $request->has('refresh');
+    
+        if ($isRefresh) {
+            foreach ($siswaAktif as $siswa) {
+                // Get existing tagihan
+                $existingTagihans = Tagihan::where('siswa_id', $siswa->id)
+                    ->where('tahun_ajaran_id', $tahunAktif->id)
+                    ->get();
+    
+                foreach ($existingTagihans as $tagihan) {
+                    // Get total payments for this tagihan
+                    $totalPayments = Pembayaran::where('siswa_id', $siswa->id)
+                        ->where('jenis_biaya', $tagihan->jenis_biaya)
+                        ->sum('jumlah');
+    
+                    // Update sisa by subtracting payments from original amount
+                    $tagihan->sisa = $tagihan->jumlah - $totalPayments;
+                    $tagihan->save();
                 }
             }
-        
+        }
+    
             foreach ($siswaAktif as $siswa) {
                 // SPP - All students (TK to Grade 6)
                 $this->generateSPPBill($siswa, $tahunAktif);

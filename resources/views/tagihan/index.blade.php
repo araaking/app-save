@@ -79,16 +79,15 @@
                                         <td>Rp {{ number_format($siswaTagihan->sum('sisa'), 0, ',', '.') }}</td>
                                         <td>
                                             <div class="btn-group">
-                                                <button type="button" 
-                                                        class="btn btn-sm btn-primary" 
-                                                        disabled>
+                                                <a href="{{ route('pembayaran.create', ['siswa_id' => $siswa->id, 'kelas_id' => $siswa->kelas_id]) }}" 
+                                                   class="btn btn-sm btn-primary">
                                                     <i class="mdi mdi-cash me-1"></i> Bayar
-                                                </button>
+                                                </a>
                                                 @if($siswaTagihan->sum('sisa') > 0)
                                                     <button type="button"
                                                             class="btn btn-sm btn-info"
                                                             data-bs-toggle="tooltip"
-                                                            title="Pembayaran akan segera tersedia">
+                                                            title="Klik tombol bayar untuk melakukan pembayaran">
                                                         <i class="mdi mdi-information"></i>
                                                     </button>
                                                 @endif

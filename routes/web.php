@@ -84,6 +84,13 @@ Route::middleware('auth')->group(function () {
         Route::delete('/penarikan/{penarikan}', [PenarikanController::class, 'destroy'])->name('penarikan.destroy');
     });
 
+// Pembayaran Routes
+Route::get('/pembayaran/create', [PembayaranController::class, 'create'])->name('pembayaran.create');
+Route::post('/pembayaran', [PembayaranController::class, 'store'])->name('pembayaran.store');
+
+// API Route for Tagihan
+Route::get('/api/siswa/{siswa}/tagihan', [PembayaranController::class, 'getTagihan']);
+
 // Tagihan (Bills) Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/tagihan', [TagihanController::class, 'index'])->name('tagihan.index');
