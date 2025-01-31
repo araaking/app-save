@@ -77,7 +77,14 @@ class BiayaSekolahController extends Controller
     // Hapus biaya
     public function destroy($id)
     {
-        BiayaSekolah::findOrFail($id)->delete();
-        return redirect()->back()->with('success', 'Biaya dihapus!');
+        $biaya = BiayaSekolah::findOrFail($id);
+        
+        // Hapus tagihan terkait
+        Tagihan::where('tahun_ajaran_id', $biaya->tahun_ajaran_id)
+            ->where('jenis_biaya', $biaya->jenis_biaya)
+            ->delete();
+            
+        $biaya->delete();
+        return redirect()->back()->with('success', 'Biaya dan tagihan terkait berhasil dihapus!');
     }
 }

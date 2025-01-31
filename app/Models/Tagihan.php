@@ -17,8 +17,7 @@ class Tagihan extends Model
         'jenis_biaya',
         'jumlah',
         'sisa',
-        'status',
-        'keterangan'
+        'status'
     ];
 
     protected $casts = [

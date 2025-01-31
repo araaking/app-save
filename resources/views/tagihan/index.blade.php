@@ -12,12 +12,27 @@
                 <div class="d-flex gap-2">
                     <form action="{{ route('tagihan.generate') }}" method="POST" class="d-inline">
                         @csrf
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-success" data-bs-toggle="tooltip" title="Generate tagihan baru">
                             <i class="mdi mdi-plus-circle me-1"></i> Generate Tagihan
+                        </button>
+                    </form>
+                    <form action="{{ route('tagihan.generate') }}" method="POST" class="d-inline">
+                        @csrf
+                        <input type="hidden" name="refresh" value="true">
+                        <button type="submit" class="btn btn-info" data-bs-toggle="tooltip" title="Perbarui tagihan yang sudah ada">
+                            <i class="mdi mdi-refresh me-1"></i> Refresh Tagihan
                         </button>
                     </form>
                 </div>
             </div>
+
+            <!-- Success Message -->
+            @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
 
             <!-- Bills List -->
             <div class="card">
