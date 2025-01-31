@@ -148,14 +148,21 @@ document.addEventListener('DOMContentLoaded', function() {
 function loadTagihan(siswaId) {
     if (!siswaId) return;
 
-    // Show loading state
     document.getElementById('payment_info').textContent = 'Memuat data tagihan...';
     document.getElementById('jenis_biaya').disabled = true;
 
-    fetch(`https://raodlatul.my.id/api/siswa/${siswaId}/tagihan`)
+    fetch(`https://raodlatul.my.id/api/siswa/${siswaId}/tagihan`, {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include' // If you need to send cookies
+    })
         .then(response => {
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                return response.text().then(text => {
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                });
             }
             return response.json();
         })
@@ -180,17 +187,17 @@ function loadTagihan(siswaId) {
             }
         })
         .catch(error => {
-            console.error('Error fetching tagihan:', {
+            console.error('Error details:', {
                 message: error.message,
                 siswaId: siswaId,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                stack: error.stack
             });
             
             document.getElementById('jenis_biaya').disabled = false;
             document.getElementById('payment_info').textContent = 
                 'Terjadi kesalahan saat memuat data tagihan. Silakan coba lagi atau hubungi administrator.';
             
-            // Optional: Show error in UI
             const alertDiv = document.createElement('div');
             alertDiv.className = 'alert alert-danger mt-2';
             alertDiv.textContent = 'Gagal memuat data: ' + error.message;
