@@ -333,22 +333,16 @@ class TagihanController extends Controller
             $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktif->id)
                 ->where('jenis_biaya', 'Seragam')
                 ->where('tingkat', 7)
+                ->where('jenis_kelamin', $siswa->jenis_kelamin)
                 ->first();
     
             if ($biaya) {
-                $jumlah = $biaya->jumlah;
-                
-                // Jika ada jenis kelamin khusus
-                if($siswa->jenis_kelamin == 'Perempuan') {
-                    $jumlah += 50000; // Contoh tambahan untuk seragam perempuan
-                }
-    
                 Tagihan::create([
                     'siswa_id' => $siswa->id,
                     'tahun_ajaran_id' => $tahunAktif->id,
                     'jenis_biaya' => 'Seragam',
-                    'jumlah' => $jumlah,
-                    'sisa' => $jumlah,
+                    'jumlah' => $biaya->jumlah,
+                    'sisa' => $biaya->jumlah,
                     'status' => 'Belum Lunas'
                 ]);
             }
