@@ -148,14 +148,21 @@ document.addEventListener('DOMContentLoaded', function() {
 function loadTagihan(siswaId) {
     if (!siswaId) return;
 
-    fetch(`/api/siswa/${siswaId}/tagihan`)
+    // Show loading state
+    document.getElementById('payment_info').textContent = 'Memuat data tagihan...';
+    document.getElementById('jenis_biaya').disabled = true;
+
+    fetch(`https://raodlatul.my.id/api/siswa/${siswaId}/tagihan`)
         .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             return response.json();
         })
         .then(data => {
             const jenisBiayaSelect = document.getElementById('jenis_biaya');
             jenisBiayaSelect.innerHTML = '<option value="">Pilih Jenis Biaya</option>';
+            jenisBiayaSelect.disabled = false;
             
             data.forEach(tagihan => {
                 if (tagihan.sisa > 0) {
@@ -173,8 +180,21 @@ function loadTagihan(siswaId) {
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('payment_info').textContent = 'Terjadi kesalahan saat memuat data tagihan.';
+            console.error('Error fetching tagihan:', {
+                message: error.message,
+                siswaId: siswaId,
+                timestamp: new Date().toISOString()
+            });
+            
+            document.getElementById('jenis_biaya').disabled = false;
+            document.getElementById('payment_info').textContent = 
+                'Terjadi kesalahan saat memuat data tagihan. Silakan coba lagi atau hubungi administrator.';
+            
+            // Optional: Show error in UI
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger mt-2';
+            alertDiv.textContent = 'Gagal memuat data: ' + error.message;
+            document.getElementById('payment_info').parentNode.appendChild(alertDiv);
         });
 }
 
