@@ -22,6 +22,7 @@
                                     <th>Jenis Biaya</th>
                                     <th>Kategori Siswa</th>
                                     <th>Tingkat</th>
+                                    <th>Jenis Kelamin</th>
                                     <th>Jumlah</th>
                                     <th>Keterangan</th>
                                     <th>Aksi</th>
@@ -51,6 +52,7 @@
                                             -
                                         @endif
                                     </td>
+                                    <td>{{ $biaya->jenis_biaya == 'Seragam' ? ($biaya->jenis_kelamin ?? '-') : '-' }}</td>
                                     <td>Rp {{ number_format($biaya->jumlah, 0, ',', '.') }}</td>
                                     <td>{{ $biaya->keterangan ?? '-' }}</td>
                                     <td>

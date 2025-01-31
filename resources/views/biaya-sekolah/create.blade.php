@@ -47,6 +47,15 @@
                                     <option value="">Pilih Tingkat</option>
                                 </select>
                             </div>
+
+                            <div class="mb-3" id="jenisKelaminField" style="display: none;">
+                                <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
+                                <select name="jenis_kelamin" id="jenis_kelamin" class="form-select">
+                                    <option value="">Pilih Jenis Kelamin</option>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="col-lg-6">
@@ -79,14 +88,24 @@ document.getElementById('jenis_biaya').addEventListener('change', function() {
     const kategoriField = document.getElementById('kategoriField');
     const tingkatField = document.getElementById('tingkatField');
     const tingkatSelect = document.getElementById('tingkat');
+    const jenisKelaminField = document.getElementById('jenisKelaminField');
     
     // Reset fields
     kategoriField.style.display = 'none';
     tingkatField.style.display = 'none';
+    jenisKelaminField.style.display = 'none';
     
     // Show category field for SPP, IKK, and Uang Pangkal
     if (['SPP', 'IKK', 'Uang Pangkal'].includes(jenis)) {
         kategoriField.style.display = 'block';
+    }
+    
+    // Show gender field for Seragam
+    if (jenis === 'Seragam') {
+        jenisKelaminField.style.display = 'block';
+        tingkatField.style.display = 'block';
+        tingkatSelect.innerHTML = '<option value="">Pilih Tingkat</option>';
+        tingkatSelect.add(new Option('Kelas 6', '7'));
     }
     
     // Handle class levels for specific fee types

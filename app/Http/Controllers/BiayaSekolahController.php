@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BiayaSekolah;
 use App\Models\TahunAjaran;
+use App\Models\Tagihan;  // Add this line
 use Illuminate\Http\Request;
 
 class BiayaSekolahController extends Controller
@@ -31,20 +32,22 @@ class BiayaSekolahController extends Controller
         $request->validate([
             'jenis_biaya' => 'required|in:SPP,IKK,THB,UAM,Wisuda,Uang Pangkal,Raport,Seragam,Foto',
             'kategori_siswa' => 'required_if:jenis_biaya,SPP,IKK,Uang Pangkal|nullable|in:Anak Guru,Anak Yatim,Kakak Beradik,Anak Normal',
-            'tingkat' => 'required_if:jenis_biaya,THB,UAM,Foto|nullable|integer|min:1|max:7',
+            'tingkat' => 'required_if:jenis_biaya,THB,UAM,Foto,Seragam|nullable|integer|min:1|max:7',
+            'jenis_kelamin' => 'required_if:jenis_biaya,Seragam|nullable|in:Laki-laki,Perempuan',  // Add this line
             'jumlah' => 'required|numeric|min:0',
             'keterangan' => 'nullable|string'
         ]);
-
+    
         BiayaSekolah::create([
             'tahun_ajaran_id' => TahunAjaran::getActive()->id,
             'jenis_biaya' => $request->jenis_biaya,
             'kategori_siswa' => $request->kategori_siswa,
             'tingkat' => $request->tingkat,
+            'jenis_kelamin' => $request->jenis_kelamin,  // Add this line
             'jumlah' => $request->jumlah,
             'keterangan' => $request->keterangan
         ]);
-
+    
         return redirect()->route('biaya-sekolah.index')
             ->with('success', 'Biaya berhasil ditambahkan!');
     }

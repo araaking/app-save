@@ -73,6 +73,7 @@ class TagihanController extends Controller
                 // UAM - Only Grade 6 (tingkat 7)
                 if ($siswa->kelas->tingkat == 7) {
                     $this->generateUAMBill($siswa, $tahunAktif);
+                    $this->generateSeragamBill($siswa, $tahunAktif);
                 }
             
                 // Graduation - Only for TK (tingkat 1) who graduated from IQRA
@@ -319,4 +320,38 @@ class TagihanController extends Controller
                 }
             }
         }
+
+    // Add this new method at the end of the class
+    private function generateSeragamBill($siswa, $tahunAktif)
+    {
+        $existing = Tagihan::where('siswa_id', $siswa->id)
+            ->where('tahun_ajaran_id', $tahunAktif->id)
+            ->where('jenis_biaya', 'Seragam')
+            ->first();
+    
+        if (!$existing) {
+            $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktif->id)
+                ->where('jenis_biaya', 'Seragam')
+                ->where('tingkat', 7)
+                ->first();
+    
+            if ($biaya) {
+                $jumlah = $biaya->jumlah;
+                
+                // Jika ada jenis kelamin khusus
+                if($siswa->jenis_kelamin == 'Perempuan') {
+                    $jumlah += 50000; // Contoh tambahan untuk seragam perempuan
+                }
+    
+                Tagihan::create([
+                    'siswa_id' => $siswa->id,
+                    'tahun_ajaran_id' => $tahunAktif->id,
+                    'jenis_biaya' => 'Seragam',
+                    'jumlah' => $jumlah,
+                    'sisa' => $jumlah,
+                    'status' => 'Belum Lunas'
+                ]);
+            }
+        }
     }
+}

@@ -16,6 +16,7 @@ class BiayaSekolah extends Model
         'jenis_biaya',
         'kategori_siswa',
         'tingkat',
+        'jenis_kelamin',
         'jumlah',
         'keterangan'
     ];
@@ -33,6 +34,8 @@ class BiayaSekolah extends Model
     public static function getAvailableClasses($jenisBiaya)
     {
         switch ($jenisBiaya) {
+            case 'Seragam':
+                return ['7']; // Hanya tingkat 7 (kelas 6)
             case 'THB':
                 return ['2', '3', '4', '5', '6', '7']; // Updated for new level system
             case 'UAM':
