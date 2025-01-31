@@ -10,6 +10,9 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h5 class="card-title mb-0">Daftar Tagihan Siswa</h5>
                 <div class="d-flex gap-2">
+                    <a href="{{ route('pembayaran.index') }}" class="btn btn-info">
+                        <i class="mdi mdi-history me-1"></i> Riwayat Pembayaran
+                    </a>
                     <form action="{{ route('tagihan.generate') }}" method="POST" class="d-inline">
                         @csrf
                         <button type="submit" class="btn btn-success" data-bs-toggle="tooltip" title="Generate tagihan baru">

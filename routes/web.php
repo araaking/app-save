@@ -85,6 +85,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Pembayaran Routes
+    Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
     Route::get('/pembayaran/create', [PembayaranController::class, 'create'])->name('pembayaran.create');
     Route::post('/pembayaran', [PembayaranController::class, 'store'])->name('pembayaran.store');
 
