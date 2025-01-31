@@ -53,7 +53,7 @@ class PembayaranController extends Controller
             // Get the related tagihan
             $tagihan = Tagihan::where('siswa_id', $request->siswa_id)
                             ->where('jenis_biaya', $request->jenis_biaya)
-                            ->where('sisa', '>', 0) // Add this condition
+                            ->where('sisa', '>', 0)
                             ->firstOrFail();
     
             // Validate payment amount doesn't exceed remaining balance
@@ -61,8 +61,8 @@ class PembayaranController extends Controller
                 throw new \Exception('Jumlah pembayaran melebihi sisa tagihan.');
             }
     
-            // Create payment record
-            $pembayaran = Pembayaran::create([
+            // Create payment record without unique constraint check
+            $pembayaran = new Pembayaran([
                 'siswa_id' => $request->siswa_id,
                 'tagihan_id' => $tagihan->id,
                 'jenis_biaya' => $request->jenis_biaya,
@@ -71,6 +71,7 @@ class PembayaranController extends Controller
                 'metode_pembayaran' => $request->metode_pembayaran,
                 'keterangan' => $request->keterangan,
             ]);
+            $pembayaran->save();
     
             // Update tagihan
             $tagihan->sisa -= $request->jumlah;
