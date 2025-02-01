@@ -59,7 +59,7 @@ class Pembayaran extends Model
         return $this->belongsTo(Siswa::class);
     }
 
-    public function tagihan(): BelongsTo
+    public function tagihan()
     {
         return $this->belongsTo(Tagihan::class);
     }

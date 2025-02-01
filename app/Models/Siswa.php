@@ -38,7 +38,7 @@ class Siswa extends Model
     }
 
     // Relasi ke Tahun Ajaran
-    public function academic_year()
+    public function academicYear()
     {
         return $this->belongsTo(TahunAjaran::class, 'academic_year_id');
     }

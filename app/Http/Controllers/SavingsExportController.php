@@ -11,6 +11,19 @@ use App\Models\Pembayaran;
 
 class SavingsExportController extends Controller
 {
+    // Add constants at the top of the class
+    private const FEE_EXEMPTIONS = [
+        'Anak Guru' => ['SPP', 'IKK', 'Uang Pangkal'],
+        'Anak Yatim' => ['SPP'],
+    ];
+
+    private const DISCOUNTS = [
+        'Kakak Beradik' => [
+            'SPP' => 0.2,
+            'IKK' => 0.2
+        ]
+    ];
+
     public function preview($id)
     {
         $data = $this->prepareData($id);
@@ -19,60 +32,24 @@ class SavingsExportController extends Controller
 
     public function exportPDF($id)
     {
-        $data = $this->prepareData($id);
-        $pdf = PDF::loadView('exports.savings-withdrawal', $data);
-        
-        $filename = 'savings-withdrawal-' . $data['bukuTabungan']->nomor_urut . '.pdf';
-        return $pdf->download($filename);
-    }
-
-    private function prepareData($id)
-    {
-        $bukuTabungan = BukuTabungan::with(['siswa.kelas'])->findOrFail($id);
-        
-        // Calculate total savings
-        $totalSimpanan = $bukuTabungan->transaksis()
-            ->where('jenis', 'simpanan')
-            ->sum('jumlah');
-    
-        // Calculate remaining installments
-        $totalCicilan = $bukuTabungan->transaksis()
-            ->where('jenis', 'cicilan')
-            ->sum('jumlah');
-        $totalPenarikanCicilan = $bukuTabungan->transaksis()
-            ->where('jenis', 'penarikan')
-            ->where('sumber_penarikan', 'cicilan')
-            ->sum('jumlah');
-        $sisaCicilan = $totalCicilan - $totalPenarikanCicilan;
-    
-        // Add remaining installments to total savings
-        $totalSimpanan += $sisaCicilan;
-        $bukuTabungan->total_simpanan = $totalSimpanan;
-    
-        // Get admin percentage based on student category
-        $adminPercentage = $this->getAdminPercentage($bukuTabungan->siswa->category);
-        $adminFee = ($totalSimpanan * $adminPercentage) / 100;
-    
-        // Calculate deductions
-        $deductions = $this->calculateDeductions($bukuTabungan);
-        
-        // Calculate remaining savings
-        $remainingSavings = ($totalSimpanan - $adminFee) - $deductions['total'];
-    
-        return [
-            'bukuTabungan' => $bukuTabungan,
-            'adminPercentage' => $adminPercentage,
-            'adminFee' => $adminFee,
-            'deductions' => $deductions,
-            'remainingSavings' => $remainingSavings,
-            'sisaCicilan' => $sisaCicilan // Added to show in the PDF
-        ];
+        try {
+            $data = $this->prepareData($id);
+            $pdf = PDF::loadView('exports.savings-withdrawal', $data);
+            
+            $filename = 'Laporan-Tabungan-' 
+                . $data['bukuTabungan']->siswa->name 
+                . '-' . now()->format('Ymd') . '.pdf';
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors([
+                'error' => 'Gagal generate PDF: ' . $e->getMessage()
+            ]);
+        }
     }
 
     private function getAdminPercentage($category)
     {
-        // Early withdrawal is handled separately if needed
-        $isEarlyWithdrawal = false;
+        $isEarlyWithdrawal = $this->isEarlyWithdrawal();
     
         return match($category) {
             'Anak Guru' => 5,
@@ -81,40 +58,43 @@ class SavingsExportController extends Controller
         };
     }
 
+    private function isEarlyWithdrawal()
+    {
+        return now()->month < 6;
+    }
+
     private function calculateDeductions($bukuTabungan)
     {
         $siswa = $bukuTabungan->siswa;
         $category = $siswa->category;
         
-        // Get BiayaSekolah for current academic year
-        $biayaSekolah = BiayaSekolah::where('tahun_ajaran_id', $siswa->academic_year_id)
-            ->where('kategori_siswa', $category)
+        // Get all unpaid tagihan for the student
+        $tagihans = $siswa->tagihan()
+            ->where('tahun_ajaran_id', $siswa->academic_year_id)
             ->get()
             ->keyBy('jenis_biaya');
-    
-        // Get paid fees
-        $paidFees = Pembayaran::where('siswa_id', $siswa->id)
-            ->where('tahun_ajaran_id', $siswa->academic_year_id)
-            ->where('is_processed', true)
-            ->get()
-            ->groupBy('jenis_biaya');
-    
+
         // Calculate unpaid SPP months
         $unpaidMonths = $this->calculateUnpaidMonths($siswa);
         
+        // Get loan from transaksi table
+        $loan = $bukuTabungan->transaksis()
+            ->where('jenis', 'penarikan')
+            ->where('sumber_penarikan', 'simpanan')
+            ->sum('jumlah');
+        
         $deductions = [
-            'ikk' => $this->calculateUnpaidFee('IKK', $biayaSekolah, $paidFees, $category),
-            'spp' => $this->calculateUnpaidFee('SPP', $biayaSekolah, $paidFees, $category) * $unpaidMonths,
-            'initial_fee' => $this->calculateUnpaidFee('Uang Pangkal', $biayaSekolah, $paidFees, $category),
-            'uam' => $this->calculateUnpaidFee('UAM', $biayaSekolah, $paidFees, $category),
-            'thb' => $this->calculateUnpaidFee('THB', $biayaSekolah, $paidFees, $category),
-            'photo' => $this->calculateUnpaidFee('Foto', $biayaSekolah, $paidFees, $category),
-            'report_card' => $this->calculateUnpaidFee('Raport', $biayaSekolah, $paidFees, $category),
-            'previous_arrears' => $bukuTabungan->previous_arrears ?? 0,
-            'loan' => $bukuTabungan->transaksis()
-                ->where('jenis', 'penarikan')
-                ->where('sumber_penarikan', 'cicilan')
-                ->sum('jumlah'),
+            'SPP' => (int)($tagihans->get('SPP')->sisa ?? 0),
+            'IKK' => (int)($tagihans->get('IKK')->sisa ?? 0),
+            'THB' => (int)($tagihans->get('THB')->sisa ?? 0),
+            'UAM' => (int)($tagihans->get('UAM')->sisa ?? 0),
+            'Wisuda' => (int)($tagihans->get('Wisuda')->sisa ?? 0),
+            'Uang Pangkal' => (int)($tagihans->get('Uang Pangkal')->sisa ?? 0),
+            'Foto' => (int)($tagihans->get('Foto')->sisa ?? 0),
+            'Raport' => (int)($tagihans->get('Raport')->sisa ?? 0),
+            'Seragam' => (int)($tagihans->get('Seragam')->sisa ?? 0),
+            'previous_arrears' => (int)($bukuTabungan->previous_arrears ?? 0),
+            'loan' => (int)$loan,
         ];
         
         $deductions['total'] = array_sum($deductions);
@@ -144,37 +124,81 @@ class SavingsExportController extends Controller
     private function calculateUnpaidMonths($siswa)
     {
         $tahunAjaran = $siswa->academicYear;
-        $startDate = \Carbon\Carbon::parse($tahunAjaran->year_start);
-        $endDate = \Carbon\Carbon::parse($tahunAjaran->year_end);
         
-        // Total months in academic year
-        $totalMonths = $startDate->diffInMonths($endDate) + 1;
+        if (!$tahunAjaran) {
+            return 0;
+        }
         
-        // Count paid months
-        $paidMonths = Pembayaran::where('siswa_id', $siswa->id)
-            ->where('tahun_ajaran_id', $tahunAjaran->id)
+        // Count unique months paid
+        $paidMonths = (int)Pembayaran::whereHas('tagihan', function ($query) use ($tahunAjaran) {
+                $query->where('tahun_ajaran_id', $tahunAjaran->id);
+            })
+            ->where('siswa_id', $siswa->id)
             ->where('jenis_biaya', 'SPP')
-            ->where('is_processed', true)
+            ->distinct()
+            ->pluck('bulan_hijri')
+            ->unique()
             ->count();
         
-        return max($totalMonths - $paidMonths, 0);
+        return $paidMonths; // Return number of months paid
     }
 
     private function isExemptFromFee($category, $jenisBiaya)
     {
-        $exemptions = [
-            'Anak Guru' => ['SPP', 'IKK', 'Uang Pangkal'],
-            'Anak Yatim' => ['SPP'],
-        ];
-    
-        return isset($exemptions[$category]) && in_array($jenisBiaya, $exemptions[$category]);
+        return in_array($jenisBiaya, self::FEE_EXEMPTIONS[$category] ?? []);
     }
 
     private function applyDiscount($amount, $category, $jenisBiaya)
     {
-        if ($category === 'Kakak Beradik' && in_array($jenisBiaya, ['SPP', 'IKK'])) {
-            return $amount * 0.8; // 20% discount
-        }
-        return $amount;
+        $discount = self::DISCOUNTS[$category][$jenisBiaya] ?? 0;
+        return $amount * (1 - $discount);
+    }
+
+    private function prepareData($id)
+    {
+        $bukuTabungan = BukuTabungan::with(['siswa.kelas', 'siswa.academicYear'])->findOrFail($id);
+        
+        // Calculate total savings
+        $totalSimpanan = $bukuTabungan->transaksis()
+            ->where('jenis', 'simpanan')
+            ->sum('jumlah');
+    
+        // Calculate remaining installments
+        $totalCicilan = $bukuTabungan->transaksis()
+            ->where('jenis', 'cicilan')
+            ->sum('jumlah');
+        $totalPenarikanCicilan = $bukuTabungan->transaksis()
+            ->where('jenis', 'penarikan')
+            ->where('sumber_penarikan', 'cicilan')
+            ->sum('jumlah');
+        $sisaCicilan = $totalCicilan - $totalPenarikanCicilan;
+    
+        // Add remaining installments to total savings
+        $totalSimpanan += $sisaCicilan;
+        $bukuTabungan->total_simpanan = $totalSimpanan;
+    
+        // Get early withdrawal status
+        $isEarlyWithdrawal = $this->isEarlyWithdrawal();
+        
+        // Get admin percentage based on student category
+        $adminPercentage = $this->getAdminPercentage($bukuTabungan->siswa->category);
+        $adminFee = ($totalSimpanan * $adminPercentage) / 100;
+    
+        // Calculate deductions
+        $deductions = $this->calculateDeductions($bukuTabungan);
+        
+        // Calculate remaining savings
+        $remainingSavings = ($totalSimpanan - $adminFee) - $deductions['total'];
+    
+        return [
+            'bukuTabungan' => $bukuTabungan,
+            'adminPercentage' => $adminPercentage,
+            'adminFee' => $adminFee,
+            'deductions' => $deductions,
+            'remainingSavings' => $remainingSavings,
+            'sisaCicilan' => $sisaCicilan,
+            'isEarlyWithdrawal' => $isEarlyWithdrawal, // Add this line
+            'unpaidMonths' => $this->calculateUnpaidMonths($bukuTabungan->siswa) // Add this if not already included
+        ];
     }
 }
