@@ -94,6 +94,7 @@ Route::middleware('auth')->group(function () {
 
     // Tagihan (Bills) Routes
     Route::get('/tagihan', [TagihanController::class, 'index'])->name('tagihan.index');
+    // Add this route
     Route::post('/tagihan/generate', [TagihanController::class, 'generateBills'])->name('tagihan.generate');
 
 }); // End of auth middleware group
