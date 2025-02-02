@@ -3,7 +3,20 @@
 @section('title', 'Daftar Penarikan')
 
 @section('content')
-<div class="container-fluid mt-4">
+<div class="container-fluid">
+    <!-- Header with Breadcrumb -->
+    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+        <div class="flex-grow-1">
+            <h4 class="fs-18 fw-semibold m-0">Daftar Penarikan</h4>
+        </div>
+        <div class="text-end">
+            <ol class="breadcrumb m-0 py-0">
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Penarikan</li>
+            </ol>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-12">
             <!-- Summary Cards -->
@@ -81,11 +94,11 @@
                 </div>
 
                 <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped mb-0">
-                            <thead>
+                    <div class="table-responsive table-card mt-0">
+                        <table class="table table-borderless table-centered align-middle table-nowrap mb-0">
+                            <thead class="text-muted table-light">
                                 <tr>
-                                    <th>No</th>
+                                    <th width="50">No</th>
                                     <th>Buku Tabungan</th>
                                     <th>Nama Siswa</th>
                                     <th>Kelas</th>
@@ -93,7 +106,7 @@
                                     <th>Jumlah</th>
                                     <th>Tanggal</th>
                                     <th>Keterangan</th>
-                                    <th>Aksi</th>
+                                    <th width="120">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -110,18 +123,18 @@
                                     <td>
                                         <div class="d-flex gap-1">
                                             <a href="{{ route('penarikan.edit', $p->id) }}" 
-                                               class="btn btn-icon btn-sm bg-primary-subtle" 
+                                               class="btn btn-icon btn-sm bg-primary-subtle me-1" 
                                                data-bs-toggle="tooltip" 
                                                title="Edit">
                                                 <i class="mdi mdi-pencil-outline fs-14 text-primary"></i>
                                             </a>
-                                            <form action="{{ route('penarikan.destroy', $p->id) }}" method="POST">
+                                            <form action="{{ route('penarikan.destroy', $p->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" 
                                                         class="btn btn-icon btn-sm bg-danger-subtle" 
                                                         data-bs-toggle="tooltip" 
-                                                        title="Delete">
+                                                        title="Hapus">
                                                     <i class="mdi mdi-delete fs-14 text-danger"></i>
                                                 </button>
                                             </form>

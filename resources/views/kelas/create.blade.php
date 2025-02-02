@@ -3,14 +3,33 @@
 @section('title', 'Tambah Kelas')
 
 @section('content')
-
 <div class="container-fluid">
+    <!-- Header & Breadcrumb -->
+    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+        <div class="flex-grow-1">
+            <h4 class="fs-18 fw-semibold m-0">Tambah Kelas</h4>
+        </div>
+        <div class="text-end">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb m-0 py-0">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('kelas.index') }}">Kelas</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tambah Kelas</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-lg-12">
-            <div class="card mt-4">
+            <!-- Main Card -->
+            <div class="card">
+                <!-- Card Header -->
                 <div class="card-header">
-                    <h4 class="card-title">Tambah Kelas</h4>
+                    <h4 class="card-title">Tambah Kelas Baru</h4>
                 </div>
+
+                <!-- Card Body -->
                 <div class="card-body">
                     <form action="{{ route('kelas.store') }}" method="POST">
                         @csrf
