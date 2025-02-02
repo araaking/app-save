@@ -4,30 +4,37 @@ namespace App\Http\Controllers;
 
 use App\Models\BukuTabungan;
 use App\Models\BiayaSekolah;
-use App\Models\Pembayaran;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use App\Models\Pembayaran;
 
 class SavingsExportController extends Controller
 {
+    // Add constants at the top of the class
+    private const FEE_EXEMPTIONS = [
+        'Anak Guru' => ['SPP', 'IKK', 'Uang Pangkal'],
+        'Anak Yatim' => ['SPP'],
+    ];
+
+    private const DISCOUNTS = [
+        'Kakak Beradik' => [
+            'SPP' => 0.2,
+            'IKK' => 0.2
+        ]
+    ];
+
     public function preview($id)
     {
-        try {
-            $data = $this->prepareData($id);
-            $pdf = Pdf::loadView('exports.savings-withdrawal', $data);
-            return $pdf->stream();
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors([
-                'error' => 'Gagal preview PDF: ' . $e->getMessage()
-            ]);
-        }
+        $data = $this->prepareData($id);
+        return view('exports.savings-withdrawal', $data);
     }
 
     public function exportPDF($id)
     {
         try {
             $data = $this->prepareData($id);
-            $pdf = Pdf::loadView('exports.savings-withdrawal', $data);
+            $pdf = PDF::loadView('exports.savings-withdrawal', $data);
             
             $filename = 'Laporan-Tabungan-' 
                 . $data['bukuTabungan']->siswa->name 
