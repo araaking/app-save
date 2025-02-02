@@ -56,7 +56,7 @@ class DashboardController extends Controller
             ->with(['siswa.kelas', 'transaksis'])
             ->get()
             ->map(function ($buku) {
-                // Calculate savings
+                // Calculate savings totals
                 $buku->total_simpanan = $buku->transaksis
                     ->where('jenis', 'simpanan')
                     ->sum('jumlah');
@@ -66,7 +66,7 @@ class DashboardController extends Controller
                     ->where('sumber_penarikan', 'simpanan')
                     ->sum('jumlah');
     
-                // Calculate installments
+                // Calculate installment totals
                 $buku->total_cicilan = $buku->transaksis
                     ->where('jenis', 'cicilan')
                     ->sum('jumlah');
@@ -75,10 +75,6 @@ class DashboardController extends Controller
                     ->where('jenis', 'penarikan')
                     ->where('sumber_penarikan', 'cicilan')
                     ->sum('jumlah');
-    
-                // Calculate remaining balances
-                $buku->saldo_tabungan = $buku->total_simpanan - $buku->total_penarikan_simpanan;
-                $buku->saldo_cicilan = $buku->total_cicilan - $buku->total_penarikan_cicilan;
     
                 return $buku;
             });

@@ -21,19 +21,25 @@
 
     <!-- Card Utama -->
     <div class="card border-0 shadow-sm mt-4">
-        <div class="card-header bg-white">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-3">
-                    <h5 class="card-title mb-0">Daftar Siswa</h5>
-                    @if($tahunAktif = \App\Models\TahunAjaran::where('is_active', true)->first())
-                        <span class="badge bg-success">
-                            Tahun Ajaran Aktif: {{ $tahunAktif->year_name }}
-                        </span>
-                    @endif
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <form action="{{ route('siswa.index') }}" method="GET" class="d-flex align-items-center gap-2">
-                        <select name="kelas" class="form-select form-select-sm" style="width: 200px;">
+        <div class="card-header bg-white d-flex align-items-center">
+            <h5 class="card-title mb-0 flex-grow-1">Daftar Siswa</h5>
+            <div class="d-flex gap-2">
+                @if($tahunAktif = \App\Models\TahunAjaran::where('is_active', true)->first())
+                    <span class="badge bg-success align-self-center">
+                        Tahun Ajaran Aktif: {{ $tahunAktif->year_name }}
+                    </span>
+                @endif
+                <a href="{{ route('siswa.create') }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus me-2"></i> Tambah Siswa
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Filter -->
+            <form action="{{ route('siswa.index') }}" method="GET" class="mb-4">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <select name="kelas" class="form-select form-select-sm">
                             <option value="">Semua Kelas</option>
                             @foreach($allKelas as $kelas)
                                 <option value="{{ $kelas->name }}" {{ request('kelas') == $kelas->name ? 'selected' : '' }}>
@@ -41,29 +47,27 @@
                                 </option>
                             @endforeach
                         </select>
+                    </div>
 
+                    <div class="col-md-6">
                         <input type="text" name="search" 
                                class="form-control form-control-sm" 
                                placeholder="Cari berdasarkan nama atau NIS..."
-                               value="{{ request('search') }}"
-                               style="width: 200px;">
+                               value="{{ request('search') }}">
+                    </div>
 
-                        <button type="submit" class="btn btn-sm btn-primary">
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary btn-sm w-100">
                             <i class="fas fa-filter me-2"></i> Filter
                         </button>
-                    </form>
-                    <a href="{{ route('siswa.create') }}" class="btn btn-success btn-sm">
-                        <i class="fas fa-plus me-2"></i> Tambah Siswa
-                    </a>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="card-body">
+            </form>
 
             <!-- Tabel Siswa -->
-            <div class="table-responsive table-card mt-0">
-                <table class="table table-borderless table-centered align-middle table-nowrap mb-0">
-                    <thead class="text-muted table-light">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-light">
                         <tr>
                             <th width="50">No</th>
                             <th>NIS</th>
@@ -97,10 +101,9 @@
                                 </td>
                                 <td class="text-center">
                                     <a href="{{ route('siswa.edit', $siswa->id) }}" 
-                                       class="btn btn-icon btn-sm bg-primary-subtle me-1" 
-                                       data-bs-toggle="tooltip" 
+                                       class="btn btn-sm btn-outline-warning"
                                        title="Edit">
-                                        <i class="mdi mdi-pencil-outline fs-14 text-primary"></i>
+                                        <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="{{ route('siswa.destroy', $siswa->id) }}" 
                                           method="POST" 
@@ -109,10 +112,9 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" 
-                                                class="btn btn-icon btn-sm bg-danger-subtle" 
-                                                data-bs-toggle="tooltip" 
+                                                class="btn btn-sm btn-outline-danger"
                                                 title="Hapus">
-                                            <i class="mdi mdi-delete fs-14 text-danger"></i>
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
                                 </td>

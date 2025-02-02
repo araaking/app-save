@@ -4,21 +4,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <!-- Header with Breadcrumb -->
-    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
-        <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">Daftar Buku Tabungan</h4>
-        </div>
-        <div class="text-end">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb m-0 py-0">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Buku Tabungan</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-    <div class="row">
+    <div class="row mt-5">
         <div class="col-md-12">
             <div class="card overflow-hidden">
                 <div class="card-header">
@@ -46,15 +32,15 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead>
+                        <table class="table table-bordered table-striped mb-0">
+                            <thead class="table-light">
                                 <tr>
-                                    <th class="text-center" width="5%">#</th>
+                                    <th width="5%">#</th>
                                     <th>Siswa</th>
                                     <th>Kelas</th>
                                     <th>Tahun Ajaran</th>
                                     <th>Nomor Buku</th>
-                                    <th class="text-center" width="15%">Aksi</th>
+                                    <th width="15%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -3,29 +3,12 @@
 @section('title', 'Edit Biaya Sekolah')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Header & Breadcrumb -->
-    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
-        <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">Edit Biaya Sekolah</h4>
-        </div>
-        <div class="text-end">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb m-0 py-0">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('biaya-sekolah.index') }}">Biaya Sekolah</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Edit Biaya Sekolah</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Edit Biaya Sekolah</h5>
-                </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Edit Biaya Sekolah</h5>
+            </div>
             <div class="card-body">
                 <form action="{{ route('biaya-sekolah.update', $biaya->id) }}" method="POST">
                     @csrf

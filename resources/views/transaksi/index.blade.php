@@ -4,19 +4,6 @@
 
 @section('content')
 <div class="container-fluid mt-4">
-<div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
-    <div class="flex-grow-1">
-        <h4 class="fs-18 fw-semibold m-0">Manajemen Transaksi</h4>
-    </div>
-    <div class="text-end">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb m-0 py-0">
-                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Transaksi</li>
-            </ol>
-        </nav>
-    </div>
-</div>
     <div class="row">
         <div class="col-md-12">
             <!-- Summary Cards -->
@@ -150,54 +137,54 @@
 
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-nowrap align-middle mb-0">
-                            <thead class="table-light">
+                        <table class="table table-bordered table-striped mb-0">
+                            <thead>
                                 <tr>
-                                    <th class="px-3" style="width: 50px;">No</th>
+                                    <th>No</th>
                                     <th>Buku Tabungan</th>
                                     <th>Nama Siswa</th>
                                     <th>Kelas</th>
                                     <th>Jenis</th>
                                     <th>Sumber Penarikan</th>
-                                    <th class="text-end">Jumlah</th>
+                                    <th>Jumlah</th>
                                     <th>Tanggal</th>
                                     <th>Keterangan</th>
-                                    <th style="width: 100px;">Aksi</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($transaksis as $index => $transaksi)
                                 <tr>
-                                    <td class="px-3">{{ $transaksis->firstItem() + $index }}</td>
+                                    <td>{{ $transaksis->firstItem() + $index }}</td>
                                     <td>{{ $transaksi->bukuTabungan->nomor_urut }}</td>
                                     <td>{{ $transaksi->bukuTabungan->siswa->name }}</td>
                                     <td>{{ $transaksi->bukuTabungan->siswa->kelas->name }}</td>
-                                    <td><span class="badge bg-{{ $transaksi->jenis === 'simpanan' ? 'success' : ($transaksi->jenis === 'cicilan' ? 'info' : 'warning') }}">{{ ucfirst($transaksi->jenis) }}</span></td>
+                                    <td>{{ ucfirst($transaksi->jenis) }}</td>
                                     <td>
                                         @if($transaksi->jenis === 'penarikan')
-                                            <span class="badge bg-secondary">{{ ucfirst($transaksi->sumber_penarikan) }}</span>
+                                            {{ ucfirst($transaksi->sumber_penarikan) }}
                                         @else
                                             -
                                         @endif
                                     </td>
-                                    <td class="text-end">Rp {{ number_format($transaksi->jumlah, 0, ',', '.') }}</td>
-                                    <td>{{ $transaksi->tanggal->format('d/m/Y H:i') }}</td>
-                                    <td>{{ $transaksi->keterangan ?: '-' }}</td>
+                                    <td>{{ number_format($transaksi->jumlah, 0, ',', '.') }}</td>
+                                    <td>{{ $transaksi->tanggal->format('d/m/Y H:i:s') }}</td>
+                                    <td>{{ $transaksi->keterangan }}</td>
                                     <td>
-                                        <div class="d-flex gap-2 justify-content-center">
+                                        <div class="d-flex gap-1">
                                             <a href="{{ route('transaksi.edit', $transaksi->id) }}" 
-                                               class="btn btn-icon btn-sm bg-primary-subtle me-1" 
+                                               class="btn btn-icon btn-sm bg-primary-subtle" 
                                                data-bs-toggle="tooltip" 
                                                title="Edit">
                                                 <i class="mdi mdi-pencil-outline fs-14 text-primary"></i>
                                             </a>
-                                            <form action="{{ route('transaksi.destroy', $transaksi->id) }}" method="POST" class="d-inline">
+                                            <form action="{{ route('transaksi.destroy', $transaksi->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" 
                                                         class="btn btn-icon btn-sm bg-danger-subtle" 
                                                         data-bs-toggle="tooltip" 
-                                                        title="Hapus">
+                                                        title="Delete">
                                                     <i class="mdi mdi-delete fs-14 text-danger"></i>
                                                 </button>
                                             </form>
@@ -206,19 +193,12 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="10" class="text-center py-4">Tidak ada data transaksi</td>
+                                    <td colspan="10" class="text-center">Tidak ada data transaksi.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-                    @if($transaksis->hasPages())
-                    <div class="card-footer border-top py-3">
-                        <div class="d-flex justify-content-end">
-                            {{ $transaksis->links() }}
-                        </div>
-                    </div>
-                    @endif
                 </div>
 
                 <div class="card-footer py-2">
