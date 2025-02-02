@@ -9,8 +9,8 @@
         <div class="flex-grow-1">
             <h4 class="fs-18 fw-semibold m-0">Daftar Pembayaran</h4>
         </div>
-        <div class="text-end">
-            <ol class="breadcrumb m-0 py-0">
+        <div class="text-sm-end text-center mt-sm-0 mt-2">
+            <ol class="breadcrumb m-0 py-0 justify-content-sm-end justify-content-center">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                 <li class="breadcrumb-item active">Pembayaran</li>
             </ol>
@@ -19,88 +19,88 @@
 
     <!-- Table Card -->
     <div class="row">
-        <div class="col-md-12">
-            <div class="card overflow-hidden">
+        <div class="col-12">
+            <div class="card">
                 <!-- Card Header with Filter -->
-                <div class="card-header">
-                    <div class="d-flex align-items-center">
+                <div class="card-header bg-white">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                         <h5 class="card-title mb-0">Data Pembayaran</h5>
-                        <form action="{{ route('pembayaran.index') }}" method="GET" 
-                              class="ms-auto d-flex align-items-center gap-2">
-                            <!-- Filter Kelas -->
-                            <select name="kelas_id" class="form-select form-select-sm" style="width: 150px;">
-                                <option value="">Semua Kelas</option>
-                                @foreach($kelas as $k)
-                                    <option value="{{ $k->id }}" {{ request('kelas_id') == $k->id ? 'selected' : '' }}>
-                                        {{ $k->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <!-- Search -->
-                            <input type="text" name="search" class="form-control form-control-sm" 
-                                   placeholder="Cari nama siswa..." value="{{ request('search') }}" 
-                                   style="width: 200px;">
-                            <button type="submit" class="btn btn-sm btn-primary">
-                                <i class="fas fa-search me-1"></i> Filter
-                            </button>
-                            <a href="{{ route('pembayaran.index') }}" class="btn btn-sm btn-outline-secondary">
-                                <i class="fas fa-undo me-1"></i> Reset
-                            </a>
-                            <a href="{{ route('tagihan.index') }}" class="btn btn-sm btn-secondary ms-2">
-                                <i class="fas fa-arrow-left me-1"></i> Kembali
-                            </a>
-                        </form>
+                        <div class="d-flex flex-column flex-sm-row align-items-stretch gap-2">
+                            <form action="{{ route('pembayaran.index') }}" method="GET" 
+                                  class="d-flex flex-column flex-sm-row align-items-stretch gap-2">
+                                <select name="kelas_id" class="form-select form-select-sm" style="width: 200px;">
+                                    <option value="">Semua Kelas</option>
+                                    @foreach($kelas as $k)
+                                        <option value="{{ $k->id }}" {{ request('kelas_id') == $k->id ? 'selected' : '' }}>
+                                            {{ $k->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <input type="text" name="search" class="form-control form-control-sm" 
+                                       placeholder="Cari nama siswa..." 
+                                       value="{{ request('search') }}"
+                                       style="width: 200px;">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-search me-1"></i> Filter
+                                    </button>
+                                    <a href="{{ route('pembayaran.index') }}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-undo me-1"></i> Reset
+                                    </a>
+                                    <a href="{{ route('tagihan.index') }}" class="btn btn-sm btn-secondary">
+                                        <i class="fas fa-arrow-left me-1"></i> Kembali
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Table Content -->
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped mb-0">
+                        <table class="table table-bordered table-striped mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="5%">No</th>
-                                    <th width="15%">Siswa</th>
-                                    <th width="10%">Kelas</th>
-                                    <th width="15%">Jenis Biaya</th>
-                                    <th width="10%">Bulan</th>
-                                    <th width="15%">Jumlah</th>
-                                    <th width="10%">Metode</th>
-                                    <th width="10%">Tanggal</th>
-                                    <th width="10%">Status</th>
+                                    <th style="min-width: 50px;">No</th>
+                                    <th style="min-width: 150px;">Siswa</th>
+                                    <th style="min-width: 100px;">Kelas</th>
+                                    <th style="min-width: 120px;">Jenis Biaya</th>
+                                    <th style="min-width: 100px;">Bulan</th>
+                                    <th style="min-width: 120px;">Jumlah</th>
+                                    <th style="min-width: 100px;">Metode</th>
+                                    <th style="min-width: 120px;">Tanggal</th>
+                                    <th style="min-width: 100px;">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($pembayarans as $index => $pembayaran)
-                                <tr>
-                                    <td>{{ $pembayarans->firstItem() + $index }}</td>
-                                    <td>{{ $pembayaran->siswa->name }}</td>
-                                    <td>{{ $pembayaran->siswa->kelas->name }}</td>
-                                    <td>{{ $pembayaran->jenis_biaya }}</td>
-                                    <td>{{ $pembayaran->bulan_hijri ?? '-' }}</td>
-                                    <td class="text-end">Rp {{ number_format($pembayaran->jumlah, 0, ',', '.') }}</td>
-                                    <td class="text-center">
-                                        @if($pembayaran->metode_pembayaran === 'cash')
-                                            <span class="badge bg-success">Cash</span>
-                                        @elseif($pembayaran->metode_pembayaran === 'cicilan')
-                                            <span class="badge bg-warning">Cicilan</span>
-                                        @else
-                                            <span class="badge bg-info">Tabungan</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ $pembayaran->created_at->format('d/m/Y H:i') }}</td>
-                                    <td class="text-center">
-                                        @if($pembayaran->metode_pembayaran !== 'cash')
-                                            <span class="badge bg-primary">Via {{ $pembayaran->metode_pembayaran }}</span>
-                                        @else
-                                            <span class="badge bg-success">Lunas</span>
-                                        @endif
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td class="text-center">{{ $pembayarans->firstItem() + $index }}</td>
+                                        <td>{{ $pembayaran->siswa->name }}</td>
+                                        <td>{{ $pembayaran->siswa->kelas->name }}</td>
+                                        <td>{{ $pembayaran->jenis_biaya }}</td>
+                                        <td>{{ $pembayaran->bulan_hijri ?? '-' }}</td>
+                                        <td class="text-end">Rp {{ number_format($pembayaran->jumlah, 0, ',', '.') }}</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-{{ $pembayaran->metode_pembayaran === 'cash' ? 'success' : ($pembayaran->metode_pembayaran === 'cicilan' ? 'warning' : 'info') }}">
+                                                {{ ucfirst($pembayaran->metode_pembayaran) }}
+                                            </span>
+                                        </td>
+                                        <td>{{ $pembayaran->created_at->format('d/m/Y H:i') }}</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-{{ $pembayaran->metode_pembayaran === 'cash' ? 'success' : 'primary' }}">
+                                                {{ $pembayaran->metode_pembayaran === 'cash' ? 'Lunas' : 'Via ' . ucfirst($pembayaran->metode_pembayaran) }}
+                                            </span>
+                                        </td>
+                                    </tr>
                                 @empty
-                                <tr>
-                                    <td colspan="9" class="text-center py-3">Tidak ada data pembayaran.</td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="9" class="text-center py-4">
+                                            <img src="{{ asset('empty-state.svg') }}" class="img-fluid mb-3" style="max-width: 200px;">
+                                            <p class="text-muted">Tidak ada data pembayaran.</p>
+                                        </td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -109,19 +109,17 @@
 
                 <!-- Pagination Footer -->
                 @if($pembayarans->hasPages())
-                <div class="card-footer py-2">
-                    <div class="row align-items-center">
-                        <div class="col-sm">
-                            <div class="text-muted">
-                                Showing {{ $pembayarans->firstItem() }} to {{ $pembayarans->lastItem() }}
-                                of {{ $pembayarans->total() }} entries
+                    <div class="card-footer">
+                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+                            <div>
+                                <small class="text-muted">
+                                    Showing {{ $pembayarans->firstItem() }} to {{ $pembayarans->lastItem() }}
+                                    of {{ $pembayarans->total() }} entries
+                                </small>
                             </div>
-                        </div>
-                        <div class="col-sm-auto">
                             {{ $pembayarans->links('pagination::bootstrap-4') }}
                         </div>
                     </div>
-                </div>
                 @endif
             </div>
         </div>

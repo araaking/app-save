@@ -22,7 +22,7 @@
     <!-- Card Utama -->
     <div class="card border-0 shadow-sm mt-4">
         <div class="card-header bg-white">
-            <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                 <div class="d-flex align-items-center gap-3">
                     <h5 class="card-title mb-0">Daftar Siswa</h5>
                     @if($tahunAktif = \App\Models\TahunAjaran::where('is_active', true)->first())
@@ -31,9 +31,10 @@
                         </span>
                     @endif
                 </div>
-                <div class="d-flex align-items-center gap-2">
-                    <form action="{{ route('siswa.index') }}" method="GET" class="d-flex align-items-center gap-2">
-                        <select name="kelas" class="form-select form-select-sm" style="width: 200px;">
+                <div class="d-flex flex-column flex-md-row align-items-stretch gap-2">
+                    <form action="{{ route('siswa.index') }}" method="GET" 
+                          class="d-flex flex-column flex-md-row align-items-stretch gap-2">
+                        <select name="kelas" class="form-select">
                             <option value="">Semua Kelas</option>
                             @foreach($allKelas as $kelas)
                                 <option value="{{ $kelas->name }}" {{ request('kelas') == $kelas->name ? 'selected' : '' }}>
@@ -43,35 +44,33 @@
                         </select>
 
                         <input type="text" name="search" 
-                               class="form-control form-control-sm" 
+                               class="form-control" 
                                placeholder="Cari berdasarkan nama atau NIS..."
-                               value="{{ request('search') }}"
-                               style="width: 200px;">
+                               value="{{ request('search') }}">
 
-                        <button type="submit" class="btn btn-sm btn-primary">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fas fa-filter me-2"></i> Filter
                         </button>
                     </form>
-                    <a href="{{ route('siswa.create') }}" class="btn btn-success btn-sm">
+                    <a href="{{ route('siswa.create') }}" class="btn btn-success">
                         <i class="fas fa-plus me-2"></i> Tambah Siswa
                     </a>
                 </div>
             </div>
         </div>
-        <div class="card-body">
-
+        <div class="card-body px-0">
             <!-- Tabel Siswa -->
-            <div class="table-responsive table-card mt-0">
+            <div class="table-responsive">
                 <table class="table table-borderless table-centered align-middle table-nowrap mb-0">
                     <thead class="text-muted table-light">
                         <tr>
-                            <th width="50">No</th>
-                            <th>NIS</th>
-                            <th>Nama Siswa</th>
-                            <th>Kelas</th>
-                            <th>Tahun Ajaran</th>
-                            <th>Status</th>
-                            <th width="120">Aksi</th>
+                            <th class="text-center" style="min-width: 50px;">No</th>
+                            <th style="min-width: 100px;">NIS</th>
+                            <th style="min-width: 150px;">Nama Siswa</th>
+                            <th style="min-width: 120px;">Kelas</th>
+                            <th style="min-width: 120px;">Tahun Ajaran</th>
+                            <th style="min-width: 100px;">Status</th>
+                            <th class="text-center" style="min-width: 100px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -120,7 +119,7 @@
                         @empty
                             <tr>
                                 <td colspan="7" class="text-center py-4">
-                                    <img src="{{ asset('empty-state.svg') }}" width="200" class="mb-3">
+                                    <img src="{{ asset('empty-state.svg') }}" class="img-fluid mb-3" style="max-width: 200px;">
                                     <p class="text-muted">Tidak ada data siswa ditemukan.</p>
                                 </td>
                             </tr>
@@ -131,7 +130,7 @@
 
             <!-- Pagination -->
             @if($siswas->hasPages())
-                <div class="d-flex justify-content-end mt-3">
+                <div class="d-flex justify-content-end mt-3 px-3">
                     {{ $siswas->withQueryString()->links() }}
                 </div>
             @endif

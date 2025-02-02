@@ -9,8 +9,8 @@
         <div class="flex-grow-1">
             <h4 class="fs-18 fw-semibold m-0">Daftar Tagihan Siswa</h4>
         </div>
-        <div class="text-end">
-            <ol class="breadcrumb m-0 py-0">
+        <div class="text-sm-end text-center mt-sm-0 mt-2">
+            <ol class="breadcrumb m-0 py-0 justify-content-sm-end justify-content-center">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                 <li class="breadcrumb-item active">Tagihan</li>
             </ol>
@@ -18,24 +18,24 @@
     </div>
 
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-12">
             <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
                 <h5 class="card-title mb-0">Daftar Tagihan Siswa</h5>
-                <div class="d-flex gap-2">
-                    <a href="{{ route('pembayaran.index') }}" class="btn btn-info">
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <a href="{{ route('pembayaran.index') }}" class="btn btn-sm btn-info">
                         <i class="mdi mdi-history me-1"></i> Riwayat Pembayaran
                     </a>
                     <form action="{{ route('tagihan.generate') }}" method="POST" class="d-inline">
                         @csrf
-                        <button type="submit" class="btn btn-success" data-bs-toggle="tooltip" title="Generate tagihan baru">
+                        <button type="submit" class="btn btn-sm btn-success" data-bs-toggle="tooltip" title="Generate tagihan baru">
                             <i class="mdi mdi-plus-circle me-1"></i> Generate Tagihan
                         </button>
                     </form>
                     <form action="{{ route('tagihan.generate') }}" method="POST" class="d-inline">
                         @csrf
                         <input type="hidden" name="refresh" value="true">
-                        <button type="submit" class="btn btn-info" data-bs-toggle="tooltip" title="Perbarui tagihan yang sudah ada">
+                        <button type="submit" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Perbarui tagihan yang sudah ada">
                             <i class="mdi mdi-refresh me-1"></i> Refresh Tagihan
                         </button>
                     </form>
@@ -57,20 +57,20 @@
                         <table class="table table-bordered table-striped mb-0">
                             <thead>
                                 <tr>
-                                    <th>No</th>
-                                    <th>Nama Siswa</th>
-                                    <th>Kelas</th>
-                                    <th>SPP</th>
-                                    <th>IKK</th>
-                                    <th>THB</th>
-                                    <th>UAM</th>
-                                    <th>Wisuda</th>
-                                    <th>Uang Pangkal</th>
-                                    <th>Foto</th>
-                                    <th>Raport</th>
-                                    <th>Seragam</th>
-                                    <th>Total</th>
-                                    <th>Aksi</th>
+                                    <th style="min-width: 50px;">No</th>
+                                    <th style="min-width: 150px;">Nama Siswa</th>
+                                    <th style="min-width: 100px;">Kelas</th>
+                                    <th style="min-width: 100px;">SPP</th>
+                                    <th style="min-width: 100px;">IKK</th>
+                                    <th style="min-width: 100px;">THB</th>
+                                    <th style="min-width: 100px;">UAM</th>
+                                    <th style="min-width: 100px;">Wisuda</th>
+                                    <th style="min-width: 120px;">Uang Pangkal</th>
+                                    <th style="min-width: 100px;">Foto</th>
+                                    <th style="min-width: 100px;">Raport</th>
+                                    <th style="min-width: 100px;">Seragam</th>
+                                    <th style="min-width: 120px;">Total</th>
+                                    <th style="min-width: 100px;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,21 +80,21 @@
                                         $tagihanByJenis = $siswaTagihan->keyBy('jenis_biaya');
                                     @endphp
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td class="text-center">{{ $loop->iteration }}</td>
                                         <td>{{ $siswa->name }}</td>
                                         <td>{{ $siswa->kelas->name }}</td>
-                                        <td>{{ isset($tagihanByJenis['SPP']) ? 'Rp ' . number_format($tagihanByJenis['SPP']->sisa, 0, ',', '.') : '-' }}</td>
-                                        <td>{{ isset($tagihanByJenis['IKK']) ? 'Rp ' . number_format($tagihanByJenis['IKK']->sisa, 0, ',', '.') : '-' }}</td>
-                                        <td>{{ isset($tagihanByJenis['THB']) ? 'Rp ' . number_format($tagihanByJenis['THB']->sisa, 0, ',', '.') : '-' }}</td>
-                                        <td>{{ isset($tagihanByJenis['UAM']) ? 'Rp ' . number_format($tagihanByJenis['UAM']->sisa, 0, ',', '.') : '-' }}</td>
-                                        <td>{{ isset($tagihanByJenis['Wisuda']) ? 'Rp ' . number_format($tagihanByJenis['Wisuda']->sisa, 0, ',', '.') : '-' }}</td>
-                                        <td>{{ isset($tagihanByJenis['Uang Pangkal']) ? 'Rp ' . number_format($tagihanByJenis['Uang Pangkal']->sisa, 0, ',', '.') : '-' }}</td>
-                                        <td>{{ isset($tagihanByJenis['Foto']) ? 'Rp ' . number_format($tagihanByJenis['Foto']->sisa, 0, ',', '.') : '-' }}</td>
-                                        <td>{{ isset($tagihanByJenis['Raport']) ? 'Rp ' . number_format($tagihanByJenis['Raport']->sisa, 0, ',', '.') : '-' }}</td>
-                                        <td>{{ isset($tagihanByJenis['Seragam']) ? 'Rp ' . number_format($tagihanByJenis['Seragam']->sisa, 0, ',', '.') : '-' }}</td>
-                                        <td>Rp {{ number_format($siswaTagihan->sum('sisa'), 0, ',', '.') }}</td>
-                                        <td>
-                                            <div class="btn-group">
+                                        <td class="text-end">{{ isset($tagihanByJenis['SPP']) ? 'Rp ' . number_format($tagihanByJenis['SPP']->sisa, 0, ',', '.') : '-' }}</td>
+                                        <td class="text-end">{{ isset($tagihanByJenis['IKK']) ? 'Rp ' . number_format($tagihanByJenis['IKK']->sisa, 0, ',', '.') : '-' }}</td>
+                                        <td class="text-end">{{ isset($tagihanByJenis['THB']) ? 'Rp ' . number_format($tagihanByJenis['THB']->sisa, 0, ',', '.') : '-' }}</td>
+                                        <td class="text-end">{{ isset($tagihanByJenis['UAM']) ? 'Rp ' . number_format($tagihanByJenis['UAM']->sisa, 0, ',', '.') : '-' }}</td>
+                                        <td class="text-end">{{ isset($tagihanByJenis['Wisuda']) ? 'Rp ' . number_format($tagihanByJenis['Wisuda']->sisa, 0, ',', '.') : '-' }}</td>
+                                        <td class="text-end">{{ isset($tagihanByJenis['Uang Pangkal']) ? 'Rp ' . number_format($tagihanByJenis['Uang Pangkal']->sisa, 0, ',', '.') : '-' }}</td>
+                                        <td class="text-end">{{ isset($tagihanByJenis['Foto']) ? 'Rp ' . number_format($tagihanByJenis['Foto']->sisa, 0, ',', '.') : '-' }}</td>
+                                        <td class="text-end">{{ isset($tagihanByJenis['Raport']) ? 'Rp ' . number_format($tagihanByJenis['Raport']->sisa, 0, ',', '.') : '-' }}</td>
+                                        <td class="text-end">{{ isset($tagihanByJenis['Seragam']) ? 'Rp ' . number_format($tagihanByJenis['Seragam']->sisa, 0, ',', '.') : '-' }}</td>
+                                        <td class="text-end fw-bold">Rp {{ number_format($siswaTagihan->sum('sisa'), 0, ',', '.') }}</td>
+                                        <td class="text-center">
+                                            <div class="d-flex gap-1 justify-content-center">
                                                 <a href="{{ route('pembayaran.create', ['siswa_id' => $siswa->id, 'kelas_id' => $siswa->kelas_id]) }}" 
                                                    class="btn btn-sm btn-primary">
                                                     <i class="mdi mdi-cash me-1"></i> Bayar
@@ -112,7 +112,10 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="12" class="text-center">Tidak ada data tagihan.</td>
+                                        <td colspan="14" class="text-center py-4">
+                                            <img src="{{ asset('empty-state.svg') }}" class="img-fluid mb-3" style="max-width: 200px;">
+                                            <p class="text-muted">Tidak ada data tagihan.</p>
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -121,11 +124,13 @@
                 </div>
 
                 <div class="card-footer">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
                         <div>
                             @if ($tagihans->count() > 0)
-                                Showing {{ $tagihans->firstItem() }} to {{ $tagihans->lastItem() }} 
-                                of {{ $tagihans->total() }} entries
+                                <small class="text-muted">
+                                    Showing {{ $tagihans->firstItem() }} to {{ $tagihans->lastItem() }} 
+                                    of {{ $tagihans->total() }} entries
+                                </small>
                             @endif
                         </div>
                         {{ $tagihans->links('pagination::bootstrap-4') }}
