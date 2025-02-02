@@ -36,10 +36,10 @@
         </div>
         <div class="card-body">
             <!-- Filter -->
-gi            <form action="{{ route('siswa.index') }}" method="GET" class="mb-4">
-                <div class="row g-2">
-                    <div class="col-12 col-md-3">
-                        <select name="kelas" class="form-select">
+            <form action="{{ route('siswa.index') }}" method="GET" class="mb-4">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <select name="kelas" class="form-select form-select-sm">
                             <option value="">Semua Kelas</option>
                             @foreach($allKelas as $kelas)
                                 <option value="{{ $kelas->name }}" {{ request('kelas') == $kelas->name ? 'selected' : '' }}>
@@ -49,15 +49,15 @@ gi            <form action="{{ route('siswa.index') }}" method="GET" class="mb-4
                         </select>
                     </div>
 
-                    <div class="col-12 col-md-6">
+                    <div class="col-md-6">
                         <input type="text" name="search" 
-                               class="form-control" 
+                               class="form-control form-control-sm" 
                                placeholder="Cari berdasarkan nama atau NIS..."
                                value="{{ request('search') }}">
                     </div>
 
-                    <div class="col-12 col-md-3">
-                        <button type="submit" class="btn btn-primary w-100">
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary btn-sm w-100">
                             <i class="fas fa-filter me-2"></i> Filter
                         </button>
                     </div>
@@ -69,28 +69,28 @@ gi            <form action="{{ route('siswa.index') }}" method="GET" class="mb-4
                 <table class="table table-hover table-bordered">
                     <thead class="table-light">
                         <tr>
-                            <th>No</th>
+                            <th width="50">No</th>
                             <th>NIS</th>
                             <th>Nama Siswa</th>
                             <th>Kelas</th>
-                            <th>T.A</th>
+                            <th>Tahun Ajaran</th>
                             <th>Status</th>
-                            <th>Aksi</th>
+                            <th width="120">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($siswas as $siswa)
                             <tr>
-                                <td class="text-center" style="min-width: 50px;">{{ $loop->iteration + ($siswas->currentPage() - 1) * $siswas->perPage() }}</td>
-                                <td style="min-width: 100px;">{{ $siswa->nis ?? '-' }}</td>
-                                <td style="min-width: 150px;">{{ $siswa->name }}</td>
-                                <td style="min-width: 120px;">
+                                <td>{{ $loop->iteration + ($siswas->currentPage() - 1) * $siswas->perPage() }}</td>
+                                <td>{{ $siswa->nis ?? '-' }}</td>
+                                <td>{{ $siswa->name }}</td>
+                                <td>
                                     <span class="badge bg-secondary">
-                                        {{ $siswa->kelas->name ?? '-' }} ({{ $siswa->kelas->tingkat ?? '-' }})
+                                        {{ $siswa->kelas->name ?? '-' }} (Tingkat {{ $siswa->kelas->tingkat ?? '-' }})
                                     </span>
                                 </td>
-                                <td style="min-width: 100px;">{{ $siswa->academicYear->year_name ?? '-' }}</td>
-                                <td style="min-width: 80px;">
+                                <td>{{ $siswa->academicYear->year_name ?? '-' }}</td>
+                                <td>
                                     @if($siswa->status == 'Aktif')
                                         <span class="badge bg-success">Aktif</span>
                                     @elseif($siswa->status == 'Lulus')
@@ -99,32 +99,30 @@ gi            <form action="{{ route('siswa.index') }}" method="GET" class="mb-4
                                         <span class="badge bg-danger">Keluar</span>
                                     @endif
                                 </td>
-                                <td class="text-center" style="min-width: 100px;">
-                                    <div class="btn-group">
-                                        <a href="{{ route('siswa.edit', $siswa->id) }}" 
-                                           class="btn btn-sm btn-outline-warning"
-                                           title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('siswa.destroy', $siswa->id) }}" 
-                                              method="POST" 
-                                              class="d-inline"
-                                              onsubmit="return confirm('Hapus siswa ini? Data transaksi terkait juga akan terhapus.')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" 
-                                                    class="btn btn-sm btn-outline-danger"
-                                                    title="Hapus">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
+                                <td class="text-center">
+                                    <a href="{{ route('siswa.edit', $siswa->id) }}" 
+                                       class="btn btn-sm btn-outline-warning"
+                                       title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('siswa.destroy', $siswa->id) }}" 
+                                          method="POST" 
+                                          class="d-inline"
+                                          onsubmit="return confirm('Hapus siswa ini? Data transaksi terkait juga akan terhapus.')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-outline-danger"
+                                                title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="7" class="text-center py-4">
-                                    <img src="{{ asset('empty-state.svg') }}" class="img-fluid mb-3" style="max-width: 200px;">
+                                    <img src="{{ asset('empty-state.svg') }}" width="200" class="mb-3">
                                     <p class="text-muted">Tidak ada data siswa ditemukan.</p>
                                 </td>
                             </tr>
