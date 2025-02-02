@@ -157,9 +157,9 @@ class TagihanController extends Controller
                     ->where('kategori_siswa', $siswa->category)
                     ->first();
         
-                if ($biaya) {
+                // Only create tagihan if biaya exists and amount is greater than 0
+                if ($biaya && $biaya->jumlah > 0) {
                     $jumlah = $biaya->jumlah * 12;
-                    
                     Tagihan::updateOrCreate(
                         [
                             'siswa_id' => $siswa->id,
@@ -176,31 +176,32 @@ class TagihanController extends Controller
             }
         }
 
-        private function generateIKKBill($siswa, $tahunAktif)
-        {
-            $existing = Tagihan::where('siswa_id', $siswa->id)
-                ->where('tahun_ajaran_id', $tahunAktif->id)
+    private function generateIKKBill($siswa, $tahunAktif)
+    {
+        $existing = Tagihan::where('siswa_id', $siswa->id)
+            ->where('tahun_ajaran_id', $tahunAktif->id)
+            ->where('jenis_biaya', 'IKK')
+            ->first();
+    
+        if (!$existing) {
+            $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktif->id)
                 ->where('jenis_biaya', 'IKK')
+                ->where('kategori_siswa', $siswa->category)
                 ->first();
-        
-            if (!$existing) {
-                $biaya = BiayaSekolah::where('tahun_ajaran_id', $tahunAktif->id)
-                    ->where('jenis_biaya', 'IKK')
-                    ->where('kategori_siswa', $siswa->category)
-                    ->first();
-        
-                if ($biaya) {
-                    Tagihan::create([
-                        'siswa_id' => $siswa->id,
-                        'tahun_ajaran_id' => $tahunAktif->id,
-                        'jenis_biaya' => 'IKK',
-                        'jumlah' => $biaya->jumlah,
-                        'sisa' => $biaya->jumlah,
-                        'status' => 'Belum Lunas'
-                    ]);
-                }
+    
+            // Only create tagihan if biaya exists and amount is greater than 0
+            if ($biaya && $biaya->jumlah > 0) {
+                Tagihan::create([
+                    'siswa_id' => $siswa->id,
+                    'tahun_ajaran_id' => $tahunAktif->id,
+                    'jenis_biaya' => 'IKK',
+                    'jumlah' => $biaya->jumlah,
+                    'sisa' => $biaya->jumlah,
+                    'status' => 'Belum Lunas'
+                ]);
             }
         }
+    }
 
         private function generateTHBBill($siswa, $tahunAktif)
         {
