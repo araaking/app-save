@@ -3,9 +3,26 @@
 @section('title', 'Penarikan Tabungan')
 
 @section('content')
-<div class="row">
-    <div class="col-12">
-        <div class="card">
+<div class="container-fluid mt-4">
+    <!-- Header & Breadcrumb -->
+    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+        <div class="flex-grow-1">
+            <h4 class="fs-18 fw-semibold m-0">Penarikan Tabungan</h4>
+        </div>
+        <div class="text-end">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb m-0 py-0">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('transaksi.index') }}">Transaksi</a></li>
+                    <li class="breadcrumb-item active">Penarikan</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm"
             <div class="card-header">
                 <h5 class="card-title mb-0">Form Penarikan</h5>
             </div>

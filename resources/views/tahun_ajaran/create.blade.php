@@ -4,11 +4,14 @@
 
 @section('content')
 <div class="container-fluid">
-    <!-- Breadcrumb Navigation -->
-    <div class="row mb-4">
-        <div class="col-lg-12">
+    <!-- Header & Breadcrumb -->
+    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+        <div class="flex-grow-1">
+            <h4 class="fs-18 fw-semibold m-0">Tambah Tahun Ajaran</h4>
+        </div>
+        <div class="text-end">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
+                <ol class="breadcrumb m-0 py-0">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('tahun-ajaran.index') }}">Tahun Ajaran</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Tambah Tahun Ajaran</li>
